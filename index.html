@@ -283,16 +283,20 @@
             z-index: 99999 !important;
         }
         
-        /* Quando o dropdown é movido para o body (algumas versões fazem isso) */
+        /* Quando o dropdown é movido para o body - posicionar corretamente */
         body > .iti__country-list {
-            position: fixed !important;
+            position: absolute !important;
             z-index: 99999 !important;
-            max-width: calc(100vw - 32px) !important; /* Limitar largura no mobile */
+            max-width: 100% !important;
+            width: calc(100vw - 32px) !important;
+            left: 16px !important;
+            right: 16px !important;
         }
         
         /* Garantir que o body não corte o dropdown */
         body {
-            overflow-x: hidden !important; /* Prevenir scroll horizontal quando dropdown abre */
+            overflow-x: hidden !important;
+            position: relative !important;
         }
         
         /* Container do form não pode ter overflow hidden */
@@ -341,6 +345,16 @@
         @media (max-width: 640px) {
             .telefone-input {
                 font-size: 16px !important;
+            }
+            
+            /* Garantir que o dropdown não cause scroll horizontal */
+            .iti__country-list {
+                position: fixed !important;
+                left: 16px !important;
+                right: 16px !important;
+                width: auto !important;
+                min-width: auto !important;
+                max-width: calc(100vw - 32px) !important;
             }
         }
 
