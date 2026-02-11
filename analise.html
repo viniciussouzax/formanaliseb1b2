@@ -1,0 +1,2107 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Análise estratégica do seu perfil para visto americano B1/B2. Responda as perguntas para uma avaliação personalizada.">
+    <meta name="theme-color" content="#000000">
+    <meta property="og:title" content="Análise de Visto B1/B2 - Formulário">
+    <meta property="og:description" content="Responda as perguntas para uma avaliação personalizada do seu perfil.">
+    <meta property="og:type" content="website">
+    <title>Análise de Visto B1/B2 - Formulário</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#000000',
+                        'primary-hover': '#1a1a1a',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp 0.5s ease-out forwards;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 2rem;
+        }
+
+        .step.active::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .step {
+            overflow: visible !important;
+        }
+
+        .hide,
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 0 !important;
+                align-items: flex-start !important;
+                padding-top: 60px !important;
+            }
+
+            main {
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                padding: 24px 16px !important;
+                margin-top: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4 text-gray-800 font-sans">
+
+    <nav class="fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-center bg-gray-50">
+        <img src="logo-preto.png" alt="Análise Visto Americano" class="h-10 w-auto object-contain">
+    </nav>
+
+    <main class="w-full max-w-xl bg-white rounded-xl shadow-sm p-6 md:p-8 relative mt-4">
+        <form id=visaForm onsubmit=return false;>
+            <!-- === STEP 0-ADDRESS: ENDEREÃ‡O RESIDENCIAL === -->
+            <div class="step active" id="step-0-address" data-step="0">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Onde você mora?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe seu país, estado e cidade de residência.</p>
+
+                    <div class="space-y-4 mb-8">
+                        <!-- País -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">País</label>
+                            <input type="text" name="endereco_pais" placeholder="Ex: Brasil" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+
+                        <!-- Estado -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estado / Província</label>
+                            <input type="text" name="endereco_estado" placeholder="Ex: São Paulo" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+
+                        <!-- Cidade -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+                            <input type="text" name="endereco_cidade" placeholder="Ex: Campinas" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-0-interview')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 0-INTERVIEW: ENTREVISTA E CASV === -->
+            <div class="step" id="step-0-interview" data-step="0">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Entrevista e CASV</h2>
+                    <p class="text-sm text-gray-500 mb-6">Escolha os locais de sua preferência para a entrevista
+                        consular e coleta biométrica.</p>
+
+                    <div class="space-y-4 mb-8">
+                        <!-- Entrevista -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Local da Entrevista</label>
+                            <select name="local_entrevista" required
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="brasilia">Brasília</option>
+                                <option value="recife">Recife</option>
+                                <option value="rio_de_janeiro">Rio de Janeiro</option>
+                                <option value="sao_paulo">São Paulo</option>
+                                <option value="porto_alegre">Porto Alegre</option>
+                            </select>
+                        </div>
+
+                        <!-- CASV -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Local do CASV</label>
+                            <p class="text-xs text-gray-400 mb-2">Centro de Atendimento ao Solicitante de Visto (coleta
+                                biométrica).</p>
+                            <select name="local_casv" required
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="brasilia">Brasília</option>
+                                <option value="recife">Recife</option>
+                                <option value="rio_de_janeiro">Rio de Janeiro</option>
+                                <option value="sao_paulo">São Paulo</option>
+                                <option value="porto_alegre">Porto Alegre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-1')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 1: TIPO DE SOLICITAÇÃO === -->
+            <div class="step" id="step-1" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Qual o tipo da sua solicitação?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione a opção mais adequada.</p>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="solicitacao_tipo" value="primeira"
+                                onclick="nextStep('step-1-usa-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Primeira solicitação</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="solicitacao_tipo" value="reaplicacao"
+                                onclick="nextStep('step-1-usa-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Reaplicação após negativa</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="solicitacao_tipo" value="renovacao"
+                                onclick="nextStep('step-1-usa-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Renovação de visto</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="solicitacao_tipo" value="mudanca"
+                                onclick="nextStep('step-1-usa-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Mudança de categoria</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="solicitacao_tipo" value="extensao"
+                                onclick="nextStep('step-1-usa-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Extensão de estadia</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 1-USA: HISTÓRICO EUA === -->
+
+            <!-- 1.USA.1: Já esteve nos EUA? -->
+            <div class="step" id="step-1-usa-check" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Você já esteve nos Estados Unidos?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Responda com honestidade.</p>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ja_esteve_eua" value="sim"
+                                onclick="nextStep('step-1-usa-max-time')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ja_esteve_eua" value="nao" onclick="nextStep('branch-1-a-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100 mt-8">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.USA.2: Tempo Máximo -->
+            <div class="step" id="step-1-usa-max-time" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Qual o período máximo que já permaneceu nos
+                        EUA?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe o valor e a unidade de tempo (ex: 15 dias, 2 semanas).
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+                            <input type="number" id="tempo_eua_valor" name="tempo_eua_valor" placeholder="Ex: 15"
+                                min="1" required
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Unidade</label>
+                            <select name="tempo_eua_unidade" required
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg bg-white focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="dias">Dias</option>
+                                <option value="semanas">Semanas</option>
+                                <option value="meses">Meses</option>
+                                <option value="anos">Anos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-1-usa-illegal')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.USA.3: Entrada Ilegal -->
+            <div class="step" id="step-1-usa-illegal" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Você já entrou ou tentou entrar nos EUA de
+                        forma ilegal?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Ex: Pela fronteira com o México ou qualquer outro meio não
+                        oficial.</p>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="entrada_ilegal" value="sim"
+                                onclick="nextStep('step-1-usa-deportation')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="entrada_ilegal" value="nao"
+                                onclick="nextStep('step-1-usa-deportation')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100 mt-8">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.USA.4: Deportação -->
+            <div class="step" id="step-1-usa-deportation" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Você já foi deportado ou teve sua entrada
+                        negada nos EUA?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Responda com veracidade.</p>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="deportacao" value="sim" onclick="nextStep('branch-1-a-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="deportacao" value="nao" onclick="nextStep('branch-1-a-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100 mt-8">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === BRANCH 1.A: PRIMEIRA SOLICITAÇÃO === -->
+
+            <!-- 1.A.1: Já viajou? -->
+            <div class="step" id="branch-1-a-1" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Já viajou internacionalmente antes?</h2>
+                    <p class="text-sm text-gray-500 mb-8">Informar viagens anteriores ajuda a demonstrar seu histórico
+                        como viajante.</p>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="viagem_internacional" value="sim"
+                                onclick="nextStep('branch-1-a-2')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="viagem_internacional" value="nao"
+                                onclick="handleTravelHistoryExit()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="mt-12 flex justify-start">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 rounded transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.A.2: Quais países? (Only if Sim) -->
+            <div class="step" id="branch-1-a-2" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Quais países visitou nos últimos 5 anos?</h2>
+
+                    <div class="mb-8">
+                        <textarea id="paises_visitados" name="paises_visitados"
+                            placeholder="Liste os países e ano da viagem (ex: França 2022, Argentina 2023)" rows="4"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+
+
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="handleTravelHistoryExit()">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === BRANCH 1.B: REAPLICAÇÃO === -->
+
+            <!-- 1.B.1: Data Negativa -->
+            <div class="step" id="branch-1-b-1" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Quando foi a negativa anterior?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Precisamos saber a data aproximada para entender o tempo
+                        decorrido desde a última tentativa.</p>
+                    <div class="mb-8">
+                        <input type="date" id="data_negativa" name="data_negativa"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-b-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.B.2: Relato e Motivo -->
+            <div class="step" id="branch-1-b-2" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Detalhes da Negativa</h2>
+
+                    <p class="text-sm text-gray-500 mb-2">Qual foi o motivo alegado pelo oficial? (Ex: Carta 214b, falta
+                        de vínculos).</p>
+                    <div class="mb-4">
+                        <input type="text" name="motivo_negativa_codigo" placeholder="Motivo alegado (se souber)"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-2">Relate brevemente como foi a entrevista:</p>
+                    <div class="mb-8">
+                        <textarea id="relato_negativa" name="relato_negativa" rows="5"
+                            placeholder="O que foi perguntado e o que você respondeu..."
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-b-3')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.B.3: Mudanças -->
+            <div class="step" id="branch-1-b-3" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">O que mudou em seu perfil desde a última
+                        solicitação?</h2>
+                    <p class="text-lg text-gray-500 mb-6">Destaque mudanças profissionais, financeiras ou pessoais.</p>
+                    <div class="mb-8">
+                        <textarea id="mudancas_perfil" name="mudancas_perfil" rows="6"
+                            placeholder="Ex: Agora estou empregado há 2 anos na mesma empresa e iniciei uma pós-graduação..."
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ... (Other branches follow similar pattern, I will implement them all with Tailwind) ... -->
+
+            <!-- === BRANCH 1.C: RENOVAÇÃO === -->
+            <!-- 1.C.1: Última Entrada -->
+            <div class="step" id="branch-1-c-1" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Quando foi sua última entrada nos EUA?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Esta data é importante para verificar se você cumpriu os
+                        prazos de estadias anteriores.</p>
+                    <div class="mb-8">
+                        <input type="date" id="ultima_entrada" name="ultima_entrada"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-c-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.C.2: Propósito -->
+            <div class="step" id="branch-1-c-2" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Qual foi o propósito da viagem anterior?</h2>
+                    <p class="text-sm text-gray-500 mb-8">O motivo informado na última vez deve ser consistente com seu
+                        uso do visto.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="proposito_anterior" value="turismo"
+                                onclick="nextStep('branch-1-c-3')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Turismo</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="proposito_anterior" value="negocios"
+                                onclick="nextStep('branch-1-c-3')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Negócios</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="proposito_anterior" value="familia"
+                                onclick="nextStep('branch-1-c-3')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Visita Familiar</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="proposito_anterior" value="outro"
+                                onclick="nextStep('branch-1-c-3')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Outro</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-8">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.C.3: Tempo Autorizado -->
+            <div class="step" id="branch-1-c-3" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Permaneceu o tempo total autorizado?</h2>
+                    <p class="text-sm text-gray-500 mb-8">Responda 'Não' caso tenha excedido o prazo concedido pela
+                        imigração (I-94).</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="tempo_autorizado" value="sim" onclick="nextStep('step-2')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="tempo_autorizado" value="nao" onclick="nextStep('step-2')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-8">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === BRANCH 1.D (Change Category) & 1.E (Extension) omitted for brevity in this thought process but will be included in full file === -->
+            <!-- Implementing all branches to ensure completeness -->
+
+            <!-- 1.D.1: Categoria Atual -->
+            <div class="step" id="branch-1-d-1" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Categoria atual do visto:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe a categoria que consta no seu selo de visto atual.</p>
+                    <div class="mb-8">
+                        <select name="categoria_atual"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg bg-white focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="b1">B1</option>
+                            <option value="b2">B2</option>
+                            <option value="b1_b2">B1/B2</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-d-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.D.2: Nova Categoria -->
+            <div class="step" id="branch-1-d-2" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Nova categoria desejada:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione para qual tipo de visto você deseja mudar agora.</p>
+                    <div class="mb-8">
+                        <select name="categoria_nova"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg bg-white focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="f1">F1 (Estudante)</option>
+                            <option value="h1b">H1B (Trabalho)</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-d-3')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.D.3: Motivo -->
+            <div class="step" id="branch-1-d-3" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Motivo da mudança:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Explique o fato novo que justifica o seu pedido de troca de
+                        categoria.</p>
+                    <div class="mb-8">
+                        <textarea id="motivo_mudanca" name="motivo_mudanca" rows="4"
+                            placeholder="Ex: Recebi uma proposta para estudar em uma universidade americana e preciso do visto F1..."
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.E steps would follow same pattern. Skipping detailed block for brevity in tool call, will rely on user to trust structure is same. -->
+            <!-- 1.E.1 & 1.E.2 & 1.E.3 go here -->
+            <div class="step" id="branch-1-e-1" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Data de entrada atual nos EUA:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe o dia em que você entrou no país nesta viagem atual.
+                    </p>
+                    <div class="mb-8">
+                        <input type="date" id="data_entrada_atual" name="data_entrada_atual"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-e-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step" id="branch-1-e-2" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Motivo da extensão:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione o principal motivo para precisar de mais tempo nos
+                        EUA.</p>
+                    <div class="flex flex-col gap-3 mb-8">
+                        <label
+                            class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition-colors hover:bg-gray-50 has-[:checked]:border-primary has-[:checked]:bg-gray-50/50">
+                            <input type="checkbox" name="motivo_extensao" value="medico"
+                                class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-3 font-medium text-gray-700">Tratamento médico</span>
+                        </label>
+                        <label
+                            class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition-colors hover:bg-gray-50 has-[:checked]:border-primary has-[:checked]:bg-gray-50/50">
+                            <input type="checkbox" name="motivo_extensao" value="evento"
+                                class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-3 font-medium text-gray-700">Evento prolongado</span>
+                        </label>
+                        <label
+                            class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition-colors hover:bg-gray-50 has-[:checked]:border-primary has-[:checked]:bg-gray-50/50">
+                            <input type="checkbox" name="motivo_extensao" value="familia"
+                                class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-3 font-medium text-gray-700">Necessidade familiar</span>
+                        </label>
+                        <label
+                            class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition-colors hover:bg-gray-50 has-[:checked]:border-primary has-[:checked]:bg-gray-50/50">
+                            <input type="checkbox" name="motivo_extensao" value="outro"
+                                class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                            <span class="ml-3 font-medium text-gray-700">Outro</span>
+                        </label>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-1-e-3')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step" id="branch-1-e-3" data-step="1">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Tempo adicional solicitado (dias):</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe quantos dias a mais você planeja ficar no país.</p>
+                    <div class="mb-8">
+                        <input type="number" id="tempo_adicional" name="tempo_adicional" min="1" placeholder="Ex: 15"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 2: FINANCEIRO === -->
+            <!-- === STEP 2: FINANCEIRO === -->
+            <!-- === STEP 2: DETALHES DA VIAGEM === -->
+            <div class="step" id="step-2" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Detalhes da Viagem</h2>
+                    <p class="text-sm text-gray-500 mb-6">Conte-nos um pouco sobre seus planos.</p>
+
+                    <div class="grid grid-cols-1 gap-6 mb-8">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Destino Pretendido</label>
+                            <p class="text-xs text-gray-400 mb-2">Caso vá para mais de uma cidade, separe por vírgula.
+                            </p>
+                            <input type="text" name="destino_viagem" placeholder="Ex: Orlando, Miami, New York" required
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Ida</label>
+                            <p class="text-xs text-gray-400 mb-2">Informe a data prevista de partida, mesmo que ainda
+                                não tenha certeza.</p>
+                            <input type="date" name="data_prevista_viagem"
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Volta</label>
+                            <p class="text-xs text-gray-400 mb-2">Informe a data prevista de retorno.</p>
+                            <input type="date" name="data_volta_viagem"
+                                class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                    <button type="button"
+                        class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                        onclick="prevStep()">Voltar</button>
+                    <button type="button"
+                        class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                        onclick="nextStep('step-2-motivo')">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+
+            <!-- === STEP 2-MOTIVO: MOTIVO DA VIAGEM === -->
+            <div class="step" id="step-2-motivo" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Qual o motivo da sua viagem?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione o principal motivo da viagem.</p>
+
+                    <div class="flex flex-col gap-2 mb-6">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="motivo_viagem" value="turismo" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Turismo</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="motivo_viagem" value="negocios" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Negócios</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="motivo_viagem" value="visita_familiar" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Visita Familiar</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="motivo_viagem" value="estudo" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Estudo</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="motivo_viagem" value="outro" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Outro</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100 mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-2-motivo-explicacao')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 2-MOTIVO-EXPLICACAO: EXPLICAÃ‡ÃƒO DO MOTIVO === -->
+            <div class="step" id="step-2-motivo-explicacao" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Explique brevemente o motivo da viagem</h2>
+                    <p class="text-sm text-gray-500 mb-6">Descreva com suas palavras o que pretende fazer nos EUA.</p>
+
+                    <div class="mb-8">
+                        <textarea name="motivo_viagem_explicacao" rows="4"
+                            placeholder="Ex: Vou visitar meu tio que mora em Orlando e aproveitar para fazer turismo..."
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-2-convite')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 2-CONVITE: CONVITE PARA OS EUA === -->
+            <div class="step" id="step-2-convite" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Você está sendo convidado(a) por alguém para
+                        ir aos EUA?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe se há alguém convidando ou patrocinando sua ida.</p>
+
+                    <div class="flex flex-col gap-2 mb-6">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="convite_tipo" value="empresa" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, por uma empresa</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="convite_tipo" value="cidadao" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, por um cidadão americano</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="convite_tipo" value="residente_permanente" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, por um residente legal permanente</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="convite_tipo" value="residente_temporario" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, por um residente legal temporário</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="convite_tipo" value="ninguem" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não, ninguém está me convidando</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100 mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-2-payer')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 2-PAYER: QUEM PAGA === -->
+            <div class="step" id="step-2-payer" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Quem pagará a viagem?</h2>
+                    <p class="text-sm text-gray-500 mb-6">A origem dos recursos é um ponto chave na análise consular.
+                    </p>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="pagador" value="proprio" onclick="nextStep('branch-2-a-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Recursos próprios</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="pagador" value="patrocinador" onclick="nextStep('branch-2-b-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Patrocinador</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="pagador" value="empresa" onclick="nextStep('branch-2-c-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Empresa</span>
+                            </div>
+                        </label>
+
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="pagador" value="outro" onclick="nextStep('step-3-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Outro</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100 mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.A.1: Renda -->
+            <div class="step" id="branch-2-a-1" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Qual é a sua renda mensal atual?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Considere sua média de faturamento ou salário líquido mensal.
+                    </p>
+                    <div class="relative mb-6">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none z-10">
+                            <span class="text-gray-500 font-semibold text-lg">R$</span>
+                        </div>
+                        <input type="text" id="renda_mensal" name="renda_mensal" placeholder="0,00" inputmode="numeric"
+                            oninput="formatCurrency(this)"
+                            class="w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-xl text-xl font-semibold focus:border-primary focus:ring-4 focus:ring-gray-50 outline-none transition-all placeholder:text-gray-300">
+                    </div>
+
+                    <!-- IR CHECK -->
+                    <div class="mt-6 mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Essa renda é declarada no Imposto de
+                            Renda?</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="total"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Sim, valor integral</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="parcial"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Sim, parcialmente</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="isento"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Sou isento / Não declaro</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="outro"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Outro</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('branch-2-a-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.A.2: Atividade Profissional -->
+            <div class="step" id="branch-2-a-2" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Atividade profissional principal:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione a opção que melhor descreve sua ocupação atual.</p>
+                    <div class="flex flex-col gap-2 mb-6">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="clt" onclick="checkIncomeSourceAndRedirect()"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Salário CLT</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="autonomo"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Autônomo</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="empresario"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Empresário</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="investimentos"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Investimentos</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="aposentado"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Aposentado</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="estudante"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Estudante</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="fonte_renda" value="outros"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Outros</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="flex justify-start items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.A.3: Detalhes Empresário -->
+            <div class="step" id="branch-2-a-3-empresario" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Informações da empresa:</h2>
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <!-- BUSINESS DETAILS (STRATEGIC) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de funcionários
+                                (CLT/PJ)</label>
+                            <input type="number" name="qtd_funcionarios" min="0" placeholder="Ex: 5" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Sede</label>
+                            <select name="tipo_sede" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="fisica">Sede Física / Comercial</option>
+                                <option value="home_office">Home Office / Residência</option>
+                                <option value="coworking">Coworking / Virtual</option>
+                            </select>
+                        </div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tempo de abertura (anos)</label>
+                        <input type="number" name="tempo_empresa_abertura" min="0" step="0.5" placeholder="Ex: 3 anos"
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                    <button type="button"
+                        class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                        onclick="prevStep()">Voltar</button>
+                    <button type="button"
+                        class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                        onclick="nextStep('step-3-1')">Continuar</button>
+                </div>
+            </div>
+            </div>
+
+            <!-- Branch 2.A.3: Detalhes Autônomo -->
+            <div class="step" id="branch-2-a-3-autonomo" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Detalhes da atuação autônoma:</h2>
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nicho / Ãrea de atuação</label>
+                            <input type="text" name="nicho_autonomo" placeholder="Ex: Consultoria de TI"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Possui contrato de prestação de
+                                serviços?</label>
+                            <div class="flex gap-4">
+                                <label class="flex-1 group relative cursor-pointer">
+                                    <input type="radio" name="possui_contrato" value="sim" class="peer sr-only">
+                                    <div
+                                        class="p-3 border border-gray-200 rounded-lg bg-white text-center transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                        <span class="font-medium text-sm">Sim</span>
+                                    </div>
+                                </label>
+                                <label class="flex-1 group relative cursor-pointer">
+                                    <input type="radio" name="possui_contrato" value="nao" class="peer sr-only">
+                                    <div
+                                        class="p-3 border border-gray-200 rounded-lg bg-white text-center transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                        <span class="font-medium text-sm">Não</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-1')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.B.1: Relação -->
+            <div class="step" id="branch-2-b-1" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Relação com o patrocinador:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe qual o seu grau de proximidade com a pessoa/empresa
+                        que pagará a viagem.</p>
+                    <div class="mb-8">
+                        <select name="relacao_patrocinador"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg bg-white focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="familiar">Familiar</option>
+                            <option value="empresa">Empresa</option>
+                            <option value="amigo">Amigo</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-2-b-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step" id="branch-2-b-2" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Motivo do patrocínio:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Explique brevemente por que esta pessoa ou empresa está
+                        custeando seus gastos.</p>
+                    <div class="mb-8">
+                        <textarea id="motivo_patrocinio" name="motivo_patrocinio" rows="4"
+                            placeholder="Ex: Viagem de férias em família / Recompensa por metas atingidas..."
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-2-b-renda')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.B.3: Renda do Patrocinador (NOVO) -->
+            <div class="step" id="branch-2-b-renda" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Qual é a renda mensal do seu patrocinador?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe o valor aproximado que pode ser comprovado
+                        (Extratos/IR).</p>
+                    <div class="relative mb-6">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none z-10">
+                            <span class="text-gray-500 font-semibold text-lg">R$</span>
+                        </div>
+                        <input type="text" id="renda_patrocinador" name="renda_patrocinador" placeholder="0,00" required
+                            inputmode="numeric" oninput="formatCurrency(this)"
+                            class="w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-xl text-xl font-semibold focus:border-primary focus:ring-4 focus:ring-gray-50 outline-none transition-all placeholder:text-gray-300">
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-1')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.C ... -->
+            <div class="step" id="branch-2-c-1" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Tipo de viagem:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione o objetivo principal desta viagem corporativa.</p>
+                    <div class="mb-8">
+                        <select name="tipo_viagem_empresa"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg bg-white focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="treinamento">Treinamento</option>
+                            <option value="congresso">Congresso</option>
+                            <option value="negocios">Negócios</option>
+                            <option value="representacao">Representação</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-2-c-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step" id="branch-2-c-2" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Tempo de empresa:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Há quanto tempo você trabalha nesta organização?</p>
+                    <div class="mb-8">
+                        <input type="number" id="tempo_empresa" name="tempo_empresa" min="0" step="0.5"
+                            placeholder="Ex: 2 anos"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-8 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-3-1')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 3: DEMOGRÃFICO === -->
+
+
+
+            <!-- 3.1: Idade -->
+            <div class="step" id="step-3-1" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Qual sua idade?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Sua idade influencia nos critérios de isenção de entrevista.
+                    </p>
+                    <div class="mb-6">
+                        <input type="number" id="idade" name="idade" min="0" max="120" placeholder="Ex: 32 anos"
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.2: Estado Civil -->
+            <div class="step" id="step-3-2" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Estado Civil</h2>
+                    <p class="text-sm text-gray-500 mb-6">Selecione sua situação civil legal atual.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estado_civil" value="solteiro"
+                                onclick="nextStep('step-3-relatives-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Solteiro(a)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estado_civil" value="casado"
+                                onclick="nextStep('step-3-2-citizen')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Casado(a)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estado_civil" value="divorciado"
+                                onclick="nextStep('step-3-relatives-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Divorciado(a)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estado_civil" value="viuvo"
+                                onclick="nextStep('step-3-relatives-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Viúvo(a)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estado_civil" value="outro" onclick="nextStep('step-3-2-outro')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Outro</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.2.1: Explicação Outro Estado Civil -->
+            <div class="step" id="step-3-2-outro" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Explique seu estado civil:</h2>
+                    <p class="text-sm text-gray-500 mb-6">Descreva brevemente (ex: União Estável, Separado...).</p>
+                    <div class="mb-6">
+                        <textarea name="estado_civil_outro_explicacao" rows="3" placeholder="Descreva aqui..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-relatives-check')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.3: Parentes nos EUA (Check) -->
+            <div class="step" id="step-3-relatives-check" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Tem parentes diretos nos EUA?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Pai, mãe, irmão(ã), cônjuge ou filhos.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="parentes_eua" value="sim"
+                                onclick="nextStep('step-3-relatives-details')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, tenho parentes diretos</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="parentes_eua" value="nao" onclick="nextStep('step-3-companions')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.3a: Detalhes Parentes -->
+            <div class="step" id="step-3-relatives-details" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Detalhes dos Parentes</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe quem são e o status legal deles.</p>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quem? (Selecione todos)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                    value="pai" class="rounded text-primary focus:ring-primary"><span>Pai</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                    value="mae" class="rounded text-primary focus:ring-primary"><span>Mãe</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                    value="irmao"
+                                    class="rounded text-primary focus:ring-primary"><span>Irmão/Irmã</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                    value="conjuge"
+                                    class="rounded text-primary focus:ring-primary"><span>Cônjuge</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                    value="filho"
+                                    class="rounded text-primary focus:ring-primary"><span>Filho(a)</span></label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Status Legal Deles</label>
+                        <select name="parentes_status"
+                            class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:border-primary outline-none">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="cidadao">Cidadão Americano</option>
+                            <option value="green_card">Residente Permanente (Green Card)</option>
+                            <option value="visto_estudante">Visto de Estudante</option>
+                            <option value="visto_trabalho">Visto de Trabalho</option>
+                            <option value="indocumentado">Indocumentado / Irregular</option>
+                            <option value="turista">Turista</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-companions')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.4: Companheiros de Viagem (RISK MITIGATION) -->
+            <div class="step" id="step-3-companions" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Pretende viajar sozinho(a)?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe se haverá acompanhantes.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="viaja_sozinho" value="sim"
+                                onclick="toggleField('div_companheiros', false); nextStep('step-3-3')"
+                                class="peer sr-only"> <!-- Goes to Kids (step-3-3) -->
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, viajarei sozinho(a)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="viaja_sozinho" value="nao"
+                                onclick="toggleField('div_companheiros', true)" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não, viajarei acompanhado</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div id="div_companheiros" class="hidden mt-6 animate-fade-in-up">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quem irá com você?</label>
+                        <input type="text" name="companheiros_nomes" placeholder="Ex: Esposa e filhos, Amigo..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+
+                        <div class="mt-4 flex justify-end">
+                            <button type="button"
+                                class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                                onclick="nextStep('step-3-3')">Continuar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.2.2: Cidadão Americano? -->
+            <div class="step" id="step-3-2-citizen" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Parceiro é cidadão americano?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Esta informação ajuda a avaliar possíveis vínculos com o país.
+                    </p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="relacionamento_citizen" value="sim"
+                                onclick="nextStep('step-3-relatives-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="relacionamento_citizen" value="nao"
+                                onclick="nextStep('step-3-relatives-check')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.3: Filhos? -->
+            <div class="step" id="step-3-3" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Você tem filhos?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Filhos no Brasil são considerados fortes vínculos sociais.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="tem_filhos" value="sim" onclick="nextStep('step-3-4')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="tem_filhos" value="nao" onclick="nextStep('step-3-5')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.4: Quantos filhos? -->
+            <div class="step" id="step-3-4" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Quantos filhos você tem?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe o número total de filhos (menores ou maiores de
+                        idade).</p>
+                    <div class="mb-6">
+                        <input type="number" id="filhos_qtd" name="filhos_qtd" min="1" placeholder="Ex: 2"
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-5')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.5: Antecedentes (KILL SWITCH) -->
+            <div class="step" id="step-3-5" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Histórico de Antecedentes</h2>
+                    <p class="text-sm text-gray-500 mb-6">Questões de segurança são prioritárias.</p>
+
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Já teve problemas com a justiça ou imigração
+                        (deportação, overstay)?</h3>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="antecedentes_criminais" value="sim" onclick="nextStep('step-4-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, já tive problemas</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="antecedentes_criminais" value="nao" onclick="nextStep('step-4-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não, nunca tive problemas</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- === STEP 4: VÃNCULOS === -->
+
+            <!-- 4.0: Ocupação (Para Patrocinados/Empresa) -->
+            <div class="step" id="step-4-0-occupation" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Qual sua ocupação principal?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Como sua viagem é custeada por terceiros, precisamos saber o
+                        que
+                        você faz.</p>
+                    <div class="flex flex-col gap-2 mb-6">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ocupacao_patrocinado" value="estudante"
+                                onclick="nextStep('step-4-1')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Estudante</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ocupacao_patrocinado" value="empregado"
+                                onclick="nextStep('step-4-1')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Empregado (CLT/Contrato)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ocupacao_patrocinado" value="autonomo"
+                                onclick="nextStep('step-4-1')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Autônomo / Empresário</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ocupacao_patrocinado" value="do_lar"
+                                onclick="nextStep('step-4-1')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Do Lar / Dependente</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="ocupacao_patrocinado" value="outro" onclick="nextStep('step-4-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Outro</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1: Estudando? -->
+            <div class="step" id="step-4-1" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Está estudando atualmente?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Estudos em curso são excelentes demonstrativos de intenção de
+                        retorno.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estudando" value="sim" onclick="nextStep('step-4-1-a')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="estudando" value="nao" onclick="nextStep('step-4-1-e')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.a: Detalhes do Curso Atual -->
+            <div class="step" id="step-4-1-a" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Sobre o seu curso atual:</h2>
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de curso</label>
+                            <select name="estudo_tipo"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="fundamental">Ensino Fundamental</option>
+                                <option value="medio">Ensino Médio</option>
+                                <option value="tecnico">Técnico</option>
+                                <option value="superior">Superior (Graduação)</option>
+                                <option value="pos">Pós-graduação / Mestrado / Doutorado</option>
+                                <option value="outro">Outro (Cursos livres, idiomas, etc)</option>
+                            </select>
+                        </div>
+                        <!-- EDUCATION SEMESTER (STRATEGIC - AGE 18-24) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Semestre / Período Atual</label>
+                            <input type="text" name="estudo_semestre" placeholder="Ex: 4Âº Semestre / 2Âº Ano" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">O que você estuda?</label>
+                            <input type="text" name="estudo_nome" placeholder="Ex: Engenharia Civil, Inglês, 3Âº ano..."
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-4-1-b')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.b: Término do Curso Atual -->
+            <div class="step" id="step-4-1-b" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Quando termina o curso?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe a data prevista para a conclusão dos estudos.</p>
+                    <div class="mb-6">
+                        <input type="date" name="estudo_termino"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-4-1-c')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.c: Outra Formação? (Para quem estuda) -->
+            <div class="step" id="step-4-1-c" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Além deste curso, possui outra formação
+                        concluída?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe se você já possui algum diploma acadêmico ou técnico
+                        anterior.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_outra_formacao" value="sim"
+                                onclick="nextStep('step-4-1-f')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_outra_formacao" value="nao" onclick="nextStep('step-4-2')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.e: Possui Formação? (Para quem não estuda) -->
+            <div class="step" id="step-4-1-e" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui alguma formação acadêmica ou técnica
+                        concluída?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Cursos superiores, técnicos ou pós-graduações concluídas.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_formacao_concluida" value="sim"
+                                onclick="nextStep('step-4-1-f')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_formacao_concluida" value="nao"
+                                onclick="nextStep('step-4-2')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.f: Detalhes da Formação Concluída (Compartilhado) -->
+            <div class="step" id="step-4-1-f" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Detalhes da formação concluída:</h2>
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nível de formação</label>
+                            <select name="formacao_nivel"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="tecnico">Ensino Técnico</option>
+                                <option value="superior">Graduação (Superior)</option>
+                                <option value="pos">Pós-graduação / Especialização</option>
+                                <option value="mestrado">Mestrado</option>
+                                <option value="doutorado">Doutorado</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nome do curso / Ãrea</label>
+                            <input type="text" name="formacao_nome" placeholder="Ex: Administração de Empresas"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Data de conclusão
+                                (aproximada)</label>
+                            <input type="date" name="formacao_data"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-4-2')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.2: Imóvel? -->
+            <div class="step" id="step-4-2" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui imóvel próprio em seu nome?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Bens declarados no Brasil reforçam seu vínculo patrimonial.
+                    </p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="imovel" value="sim" onclick="nextStep('step-4-3')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="imovel" value="nao" onclick="nextStep('step-4-3')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.3: Outros Negócios? -->
+            <div class="step" id="step-4-3" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui participações societárias ou outros
+                        negócios no Brasil?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Ter vínculos empresariais ativos é um dos pontos mais fortes
+                        para o visto.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="outros_negocios" value="sim"
+                                onclick="nextStep('step-duvidas', true)" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, possuo</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="outros_negocios" value="nao"
+                                onclick="nextStep('step-duvidas', true)" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não possuo</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP: Dúvidas -->
+            <div class="step" id="step-duvidas" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Dúvidas sobre o processo</h2>
+                    <p class="text-sm text-gray-500 mb-6">Queremos tirar todas as suas incertezas.</p>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quais são suas principais dúvidas
+                            sobre o processo do visto?</label>
+                        <textarea id="duvidas_principais" name="duvidas_principais" rows="5"
+                            placeholder="Ex: Quanto tempo demora? Posso aplicar sozinho? Tenho medo da entrevista..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-info-importante')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP: Informações Importantes (Final) -->
+            <div class="step" id="step-info-importante" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Informações Importantes</h2>
+                    <p class="text-sm text-gray-500 mb-6">Algo mais que devamos saber?</p>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">O que você acredita ser importante a
+                            gente saber sobre você e seu caso?</label>
+                        <textarea id="info_importante" name="info_importante" rows="5"
+                            placeholder="Conte-nos detalhes que possam ser relevantes para sua análise. Sua história, preocupações, expectativas..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="handleFinalSelection()">Finalizar Análise</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- Resume Modal -->
+    <div id="resumeModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-[2147483647] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 transform transition-all scale-100">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Continuar preenchimento?</h3>
+            <p class="text-gray-600 mb-6">Encontramos um preenchimento em andamento. Deseja continuar de onde parou?</p>
+            <div class="flex flex-col gap-3">
+                <button onclick="resumeForm()"
+                    class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    Continuar de onde parou
+                </button>
+                <button onclick="restartForm()"
+                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
+                    Começar do início
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script src="analise.js"></script>
+</body>
+
+</html>

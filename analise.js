@@ -1,24 +1,15 @@
+// ============================================================
+// analise.js — Lógica da página de Análise (analise.html)
+// Depende de: shared.js (carregado antes)
+// ============================================================
+
 // State management
 let historyStack = [];
 const MAX_HISTORY = 50;
 let formHasData = false;
 let formSubmitted = false;
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://zcpvknzktfmotvrybxdf.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjcHZrbnprdGZtb3R2cnlieGRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MDk2MjIsImV4cCI6MjA4NjM4NTYyMn0.XaJG4V6NsQTYoU8I_wxHLyDEkVdPosqfJNm8nRHVjxg';
-// Verifica se supabase já existe (declarado pelo CDN) ou cria uma nova instância
-let supabaseClient = null;
-if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-} else if (typeof supabase !== 'undefined') {
-    supabaseClient = supabase;
-}
-
-// Session ID Management
-let sessionId = localStorage.getItem('visaFormSessionId') || 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-localStorage.setItem('visaFormSessionId', sessionId);
-
+// ===== Save / Resume Progress =====
 function checkSavedProgress() {
     const saved = localStorage.getItem('visaFormProgress');
     if (saved) {
@@ -47,14 +38,17 @@ function saveProgress() {
                 formData[input.name].push(input.value);
             }
         } else {
-            if (input.id === 'telefone') {
-                // Telefone é salvo como está, o DDI é salvo separadamente ou concatenado no envio
-                formData[input.name] = input.value;
-            } else {
-                formData[input.name] = input.value;
-            }
+            formData[input.name] = input.value;
         }
     });
+
+    // Incluir dados de contato do localStorage
+    const contact = getContactData();
+    if (contact) {
+        formData.nome_completo = contact.nome_completo;
+        formData.email = contact.email;
+        formData.telefone = contact.telefone;
+    }
 
     const state = {
         stepId: activeStep.id,
@@ -64,41 +58,7 @@ function saveProgress() {
 
     localStorage.setItem('visaFormProgress', JSON.stringify(state));
     formHasData = Object.keys(formData).length > 0;
-    syncToSupabase(activeStep.id, formData);
-}
-
-async function syncToSupabase(stepId, data) {
-    if (!supabaseClient) {
-        console.warn('[SUPABASE] Cliente não inicializado');
-        return;
-    }
-
-    try {
-        const payload = {
-            session_id: sessionId,
-            nome_completo: data.nome_completo || null,
-            email: data.email || null,
-            telefone: data.telefone || null,
-            current_step: stepId,
-            dados_completos: data,
-            status: formSubmitted ? 'completed' : 'in_progress',
-            updated_at: new Date().toISOString()
-        };
-
-        console.log('[SUPABASE] Sync telefone:', payload.telefone);
-
-        const { error } = await supabaseClient
-            .from('analise_visto')
-            .upsert(payload, { onConflict: 'session_id' });
-
-        if (error) {
-            console.error('[SUPABASE] Erro:', error);
-        } else {
-            console.log('[SUPABASE] Sync OK');
-        }
-    } catch (err) {
-        console.error('[SUPABASE] Exceção:', err);
-    }
+    syncToSupabase(activeStep.id, formData, formSubmitted);
 }
 
 function resumeForm() {
@@ -135,7 +95,7 @@ function resumeForm() {
     if (targetStep) {
         targetStep.classList.add('active');
     } else {
-        document.getElementById('step-0').classList.add('active');
+        document.getElementById('step-0-address').classList.add('active');
     }
 
     const modal = document.getElementById('resumeModal');
@@ -149,10 +109,10 @@ function restartForm() {
     document.getElementById('visaForm').reset();
     historyStack = [];
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step-0').classList.add('active');
+    document.getElementById('step-0-address').classList.add('active');
 }
 
-// Validation Logic
+// ===== Validation =====
 function validateStep() {
     const activeStep = document.querySelector('.step.active');
     if (!activeStep) return true;
@@ -172,29 +132,18 @@ function validateStep() {
         msg.className = 'error-message text-red-500 text-xs mt-1 font-medium';
         msg.innerText = message;
 
-        if (input.id === 'telefone' && input.closest('.iti')) {
-            input.closest('.iti').parentElement.appendChild(msg);
-        } else {
-            if (input.parentElement) {
-                input.parentElement.appendChild(msg);
-            }
+        if (input.parentElement) {
+            input.parentElement.appendChild(msg);
         }
     };
 
     inputs.forEach(input => {
         if (input.type === 'button' || input.type === 'submit' || input.type === 'hidden') return;
-        // Ignore hidden elements (e.g., toggleable state fields or hidden divs)
         if (input.offsetParent === null) return;
 
         input.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
 
-        if (input.id === 'telefone') {
-            const phoneValue = input.value.replace(/\D/g, '');
-            if (phoneValue.length < 8) { // Validação simples de tamanho
-                showError(input, "Telefone inválido.");
-            }
-        } else if (input.type === 'date' || input.type === 'month') {
-            // Validação de datas
+        if (input.type === 'date' || input.type === 'month') {
             if (!input.value) {
                 showError(input, "Selecione uma data.");
             } else {
@@ -202,16 +151,11 @@ function validateStep() {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
-                // Para data de negativa, não pode ser data futura
                 if (input.id === 'data_negativa' && selectedDate > today) {
                     showError(input, "Data da negativa não pode ser futura.");
-                }
-                // Para última entrada, não pode ser data futura
-                else if (input.id === 'ultima_entrada' && selectedDate > today) {
+                } else if (input.id === 'ultima_entrada' && selectedDate > today) {
                     showError(input, "Data de entrada não pode ser futura.");
-                }
-                // Para data de término do curso, deve ser data futura
-                else if (input.name === 'estudo_termino' && selectedDate <= today) {
+                } else if (input.name === 'estudo_termino' && selectedDate <= today) {
                     showError(input, "Data de término deve ser futura.");
                 }
             }
@@ -224,16 +168,12 @@ function validateStep() {
             if (!input.value.trim() && !optionalFields.includes(input.name)) {
                 showError(input, "Este campo é obrigatório.");
             } else if (input.type === 'email') {
-                // Validação mais robusta de email
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 if (!emailRegex.test(input.value)) {
                     showError(input, "E-mail inválido. Ex: nome@email.com");
                 }
             } else if (input.type === 'number' || input.inputMode === 'numeric') {
-                // Validações específicas para campos numéricos
                 const numValue = parseFloat(input.value);
-
-                // Fix: Allow typing by not validating while empty if it's required (handled by previous check)
                 if (input.value === '') return;
 
                 if (input.id === 'idade') {
@@ -313,40 +253,7 @@ function validateStep() {
     return isValid;
 }
 
-function updateProgress() {
-    const activeStep = document.querySelector('.step.active');
-    if (!activeStep) return;
-
-    const stepAttr = activeStep.getAttribute('data-step');
-    if (!stepAttr) return;
-
-    let currentStep;
-    const totalSteps = 4;
-
-    if (stepAttr === 'final') {
-        currentStep = totalSteps;
-    } else {
-        currentStep = parseInt(stepAttr);
-    }
-
-    const progress = Math.min(100, Math.round((currentStep / totalSteps) * 100));
-
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
-    const progressPercent = document.getElementById('progress-percent');
-
-    if (progressBar) progressBar.style.width = progress + '%';
-    if (progressText) progressText.textContent = `Etapa ${currentStep + 1} de ${totalSteps + 1}`;
-    if (progressPercent) progressPercent.textContent = progress + '%';
-}
-
-function sanitizeString(str) {
-    if (typeof str !== 'string') return str;
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
-
+// ===== Navigation =====
 function nextStep(targetId, skipValidation) {
     if (!skipValidation && !validateStep()) {
         return;
@@ -391,77 +298,12 @@ function nextStep(targetId, skipValidation) {
     }
 }
 
-function handleFinalSelection() {
-    setTimeout(() => {
-        submitForm();
-    }, 200);
-}
-
-// Logic to skip Business Question if already Entrepreneur
-function handleStep43Navigation(targetId) {
-    if (targetId === 'step-4-3') {
-        const incomeSource = document.querySelector('input[name="fonte_renda"]:checked');
-        if (incomeSource && incomeSource.value === 'empresario') {
-            console.log("[LOGIC] Skipping step-4-3 because user is entrepreneur");
-            // Auto-fill to avoid validation errors if we want to save 'Sim'
-            // But better just to leave it null or handle in backend.
-            // Let's just skip to next step which is 'step-duvidas'
-            // We need to push the skipped step to history? No, just skip key.
-            nextStep('step-duvidas', true);
-            return true; // Handled
-        }
-    }
-    return false; // Not handled
-}
-
-function checkIncomeSourceAndRedirect() {
-    setTimeout(() => {
-        const selected = document.querySelector('input[name="fonte_renda"]:checked');
-        const source = selected ? selected.value : null;
-
-        if (source === 'empresario') {
-            nextStep('branch-2-a-3-empresario', true);
-        } else if (source === 'autonomo') {
-            nextStep('branch-2-a-3-autonomo', true);
-        } else {
-            nextStep('step-3-1', true);
-        }
-    }, 200);
-}
-
-// Logic to route Sponsored/Company trips to Occupation Question in Step 4
-function handleStep4Navigation(targetId) {
-    const activeStep = document.querySelector('.step.active');
-    // Prevent loop if already on the occupation step
-    if (activeStep && activeStep.id === 'step-4-0-occupation') return false;
-
-    if (targetId === 'step-4-1') { // Entering Step 4
-        // Check "Quem paga"
-        const payer = document.querySelector('input[name="pagador"]:checked');
-        if (payer && (payer.value === 'patrocinador' || payer.value === 'empresa')) {
-            console.log("[LOGIC] Redirecting to Occupation Question (Sponsored/Company)");
-            nextStep('step-4-0-occupation', true);
-            return true; // Handled
-        }
-    }
-    return false;
-}
-
-function formatCurrency(input) {
-    let value = input.value.replace(/\D/g, "");
-    if (value === "") {
-        input.value = "";
+function prevStep() {
+    if (historyStack.length === 0) {
+        // Se não tem histórico, voltar para o cadastro
+        window.location.href = buildUrlWithOid('index.html');
         return;
     }
-    value = (parseInt(value) / 100).toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-    input.value = value;
-}
-
-function prevStep() {
-    if (historyStack.length === 0) return;
 
     const currentStep = document.querySelector('.step.active');
     const prevStepId = historyStack.pop();
@@ -485,10 +327,94 @@ function prevStep() {
     }, 100);
 }
 
+// ===== Business Logic =====
+function handleFinalSelection() {
+    setTimeout(() => {
+        submitForm();
+    }, 200);
+}
+
+function handleStep43Navigation(targetId) {
+    if (targetId === 'step-4-3') {
+        const incomeSource = document.querySelector('input[name="fonte_renda"]:checked');
+        if (incomeSource && incomeSource.value === 'empresario') {
+            console.log("[LOGIC] Skipping step-4-3 because user is entrepreneur");
+            nextStep('step-duvidas', true);
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkIncomeSourceAndRedirect() {
+    setTimeout(() => {
+        const selected = document.querySelector('input[name="fonte_renda"]:checked');
+        const source = selected ? selected.value : null;
+
+        if (source === 'empresario') {
+            nextStep('branch-2-a-3-empresario', true);
+        } else if (source === 'autonomo') {
+            nextStep('branch-2-a-3-autonomo', true);
+        } else {
+            nextStep('step-3-1', true);
+        }
+    }, 200);
+}
+
+function handleStep4Navigation(targetId) {
+    const activeStep = document.querySelector('.step.active');
+    if (activeStep && activeStep.id === 'step-4-0-occupation') return false;
+
+    if (targetId === 'step-4-1') {
+        const payer = document.querySelector('input[name="pagador"]:checked');
+        if (payer && (payer.value === 'patrocinador' || payer.value === 'empresa')) {
+            console.log("[LOGIC] Redirecting to Occupation Question (Sponsored/Company)");
+            nextStep('step-4-0-occupation', true);
+            return true;
+        }
+    }
+    return false;
+}
+
+function handleTravelHistoryExit() {
+    const tipoSolicitacao = document.querySelector('input[name="solicitacao_tipo"]:checked')?.value;
+    console.log("[NAV] Travel History Exit. Tipo:", tipoSolicitacao);
+
+    switch (tipoSolicitacao) {
+        case 'reaplicacao':
+            nextStep('branch-1-b-1');
+            break;
+        case 'renovacao':
+            nextStep('branch-1-c-1');
+            break;
+        case 'mudanca':
+            nextStep('branch-1-d-1');
+            break;
+        case 'extensao':
+            nextStep('branch-1-e-1');
+            break;
+        default:
+            nextStep('step-2');
+            break;
+    }
+}
+
+function formatCurrency(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value === "") {
+        input.value = "";
+        return;
+    }
+    value = (parseInt(value) / 100).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    input.value = value;
+}
+
 function toggleField(fieldId, shouldShow) {
     const field = document.getElementById(fieldId);
     if (!field) return;
-
     if (shouldShow) {
         field.classList.remove('hidden');
     } else {
@@ -496,6 +422,26 @@ function toggleField(fieldId, shouldShow) {
     }
 }
 
+function showStatus(message, isError = false) {
+    const currentStep = document.querySelector('.step.active');
+    if (!currentStep) return;
+
+    const existing = currentStep.querySelector('.status-msg');
+    if (existing) existing.remove();
+
+    const msg = document.createElement('p');
+    msg.className = `status-msg text-sm mt-4 text-center font-medium ${isError ? 'text-red-500' : 'text-gray-500 animate-pulse'}`;
+    msg.innerText = message;
+
+    const container = currentStep.querySelector('.flex.flex-col');
+    if (container) {
+        container.appendChild(msg);
+    } else {
+        currentStep.appendChild(msg);
+    }
+}
+
+// ===== Submit Form =====
 function submitForm() {
     if (window.isSubmitting) return;
     window.isSubmitting = true;
@@ -521,14 +467,13 @@ function submitForm() {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // Telefone já vem completo do input
-    const telefone = document.getElementById('telefone');
-    if (telefone) {
-        console.log("[SUBMIT] Telefone:", data.telefone);
+    // Incluir dados de contato do localStorage
+    const contact = getContactData();
+    if (contact) {
+        data.nome_completo = contact.nome_completo;
+        data.email = contact.email;
+        data.telefone = contact.telefone;
     }
-
-
-    // endereco_estado agora é texto livre (sem coalescing necessário)
 
     // Converter renda_mensal de formato brasileiro (1.234,56) para número
     if (data.renda_mensal && typeof data.renda_mensal === 'string') {
@@ -556,7 +501,8 @@ function submitForm() {
         }
     });
 
-    data.session_id = sessionId;
+    data.session_id = getSessionId();
+    data.oid = getOid();
     data.status = 'completed';
     data.timestamp = new Date().toISOString();
 
@@ -572,7 +518,7 @@ function submitForm() {
         }
     });
 
-    // Sanitização e Limpeza ANTES da sincronização
+    // Sanitização e Limpeza
     Object.keys(data).forEach(key => {
         if (data[key] == null || data[key] === "") {
             delete data[key];
@@ -582,19 +528,9 @@ function submitForm() {
     });
 
     formSubmitted = true;
-    syncToSupabase('step-final', data);
+    syncToSupabase('step-final', data, true);
 
     console.log("Sending data:", data);
-
-    const goToFinalScreen = () => {
-        const currentStep = document.querySelector('.step.active');
-        if (currentStep) currentStep.classList.remove('active');
-        const finalStep = document.getElementById('step-final');
-        if (finalStep) finalStep.classList.add('active');
-        localStorage.removeItem('visaFormProgress');
-        window.isSubmitting = false;
-        formSubmitted = true;
-    };
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -610,81 +546,37 @@ function submitForm() {
         .then(response => {
             clearTimeout(timeoutId);
             console.log("Success:", response);
-            goToFinalScreen();
+            goToThankYouPage();
         })
         .catch((error) => {
             clearTimeout(timeoutId);
             console.error('Error:', error);
-            goToFinalScreen();
+            // Mesmo com erro, redirecionar (dados já foram salvos no Supabase)
+            goToThankYouPage();
         });
 }
 
-function showStatus(message, isError = false) {
-    const currentStep = document.querySelector('.step.active');
-    if (!currentStep) return;
-
-    const existing = currentStep.querySelector('.status-msg');
-    if (existing) existing.remove();
-
-    const msg = document.createElement('p');
-    msg.className = `status-msg text-sm mt-4 text-center font-medium ${isError ? 'text-red-500' : 'text-gray-500 animate-pulse'}`;
-    msg.innerText = message;
-
-    const container = currentStep.querySelector('.flex.flex-col');
-    if (container) {
-        container.appendChild(msg);
-    } else {
-        currentStep.appendChild(msg);
-    }
+function goToThankYouPage() {
+    clearAllFormData();
+    window.isSubmitting = false;
+    window.location.href = buildUrlWithOid('obrigado.html');
 }
 
-function submitLeadAndContinue() {
-    if (!validateStep()) return;
-
-    const nome = document.getElementById('nome_completo');
-    const email = document.getElementById('email');
-
-    let telefoneFull = '';
-    const telefoneInput = document.getElementById('telefone');
-
-    if (telefoneInput) {
-        telefoneFull = telefoneInput.value;
-        console.log("[LEAD] Telefone:", telefoneFull);
-    }
-
-    const leadData = {
-        session_id: sessionId,
-        status: 'started',
-        nome_completo: nome ? nome.value : '',
-        telefone: telefoneFull,
-        email: email ? email.value : '',
-        timestamp: new Date().toISOString()
-    };
-
-    console.log("Sending lead data:", leadData);
-
-    fetch('https://team-sereno-club-sereno-361266c9.flowfuse.cloud/analise', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(leadData),
-    }).then(response => {
-        console.log("Lead captured:", response.status);
-    }).catch(err => {
-        console.error("Error capturing lead:", err);
-    });
-
-    saveProgress();
-    nextStep('step-0-truth');
-}
-
-// ===== INTL-TEL-INPUT - SETUP PADRÃO =====
-// Função ITI removida em favor de select nativo
-
-// Initialize on DOMContentLoaded
+// ===== Initialization =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Configurar datas máximas para inputs de data (não permitir datas futuras)
+    // Verificar se o usuário já fez o cadastro
+    const contact = getContactData();
+    if (!contact || !contact.nome_completo) {
+        console.warn('[ANALISE] Sem dados de contato. Redirecionando para cadastro.');
+        window.location.href = buildUrlWithOid('index.html');
+        return;
+    }
+
+    console.log('[ANALISE] Contato carregado:', contact.nome_completo);
+    console.log('[ANALISE] OID:', getOid());
+    console.log('[ANALISE] Session:', getSessionId());
+
+    // Configurar datas máximas para inputs de data
     const today = new Date().toISOString().split('T')[0];
     document.querySelectorAll('input[type="date"]').forEach(input => {
         if (input.id === 'data_negativa' || input.id === 'ultima_entrada' || input.id === 'data_entrada_atual') {
@@ -692,16 +584,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Reativado: verificar se existe progresso salvo
+    // Verificar progresso salvo
     checkSavedProgress();
 
-    // Múltiplas tentativas de inicialização removidas pois ITI não é mais usado
-    // initializeITI();
-    // setTimeout(initializeITI, 200);
-    // setTimeout(initializeITI, 500);
-    // setTimeout(initializeITI, 1000);
-
-    // Interceptar radio buttons
+    // Interceptar radio buttons com onclick
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         const onclickAttr = radio.getAttribute('onclick');
         if (onclickAttr && onclickAttr.includes('nextStep')) {
@@ -733,36 +619,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // === PIXELS DE ANÁLISE ===
+    // Meta Pixel: fbq('track', 'ViewContent');
+    // Google Ads: gtag('event', 'page_view', { page_title: 'Analise' });
 });
-
-// Confirmação antes de sair da página - DESATIVADA
-// window.addEventListener('beforeunload', (e) => {
-//     if (formHasData && !formSubmitted) {
-//         e.preventDefault();
-//         e.returnValue = '';
-//         return '';
-//     }
-// });
-// Navigation Logic for Travel History Exit
-function handleTravelHistoryExit() {
-    const tipoSolicitacao = document.querySelector('input[name="solicitacao_tipo"]:checked')?.value;
-    console.log("[NAV] Travel History Exit. Tipo:", tipoSolicitacao);
-
-    switch (tipoSolicitacao) {
-        case 'reaplicacao':
-            nextStep('branch-1-b-1');
-            break;
-        case 'renovacao':
-            nextStep('branch-1-c-1');
-            break;
-        case 'mudanca':
-            nextStep('branch-1-d-1');
-            break;
-        case 'extensao':
-            nextStep('branch-1-e-1');
-            break;
-        default: // 'primeira' e outros
-            nextStep('step-2');
-            break;
-    }
-}
