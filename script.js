@@ -478,7 +478,7 @@ function submitForm() {
     }
     
     // Converter datas de yyyy-mm-dd para dd/mm/yyyy
-    const dateFields = ['data_negativa', 'ultima_entrada', 'data_entrada_atual'];
+    const dateFields = ['data_negativa', 'ultima_entrada', 'data_entrada_atual', 'formacao_data'];
     dateFields.forEach(field => {
         if (data[field] && data[field].includes('-')) {
             const [year, month, day] = data[field].split('-');

@@ -1663,9 +1663,9 @@
                                 class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Ano de conclusão
-                                (aproximado)</label>
-                            <input type="number" name="formacao_ano" placeholder="Ex: 2018" min="1950" max="2026"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Data de conclusão
+                                (aproximada)</label>
+                            <input type="date" name="formacao_data" 
                                 class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
                     </div>
@@ -1720,7 +1720,7 @@
                         para o visto.</p>
                     <div class="flex flex-col gap-2">
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="empresa_propria" value="sim" onclick="handleFinalSelection()"
+                            <input type="radio" name="empresa_propria" value="sim" onclick="nextStep('step-duvidas', true)"
                                 class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
@@ -1728,7 +1728,7 @@
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="empresa_propria" value="nao" onclick="handleFinalSelection()"
+                            <input type="radio" name="empresa_propria" value="nao" onclick="nextStep('step-duvidas', true)"
                                 class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
@@ -1744,19 +1744,60 @@
                 </div>
             </div>
 
+            <!-- STEP: Dúvidas e Informações Adicionais -->
+            <div class="step" id="step-duvidas" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Dúvidas e informações importantes</h2>
+                    <p class="text-sm text-gray-500 mb-6">Queremos conhecer melhor seu caso.</p>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quais são suas principais dúvidas sobre o processo do visto?</label>
+                        <textarea id="duvidas_principais" name="duvidas_principais" rows="3"
+                            placeholder="Ex: Quanto tempo demora? Posso aplicar sozinho? Tenho medo da entrevista..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">O que você acredita ser importante a gente saber sobre você e seu caso?</label>
+                        <textarea id="info_importante" name="info_importante" rows="4"
+                            placeholder="Conte-nos detalhes que possam ser relevantes para sua análise. Sua história, preocupações, expectativas..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="handleFinalSelection()">Finalizar Análise</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- FINAL SUCCESS SCREEN -->
             <div class="step" id="step-final" data-step="final">
-                <div class="flex flex-col h-full items-center justify-center text-center max-w-lg mx-auto pt-20">
+                <div class="flex flex-col h-full items-center justify-center text-center max-w-lg mx-auto pt-12">
                     <div
                         class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
-                        <span class="text-4xl">✅</span>
+                        <span class="text-4xl">🎉</span>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Tudo certo!</h2>
-                    <p class="text-base text-gray-600 mb-8 leading-relaxed">
-                        Falta apenas 1 passo!<br>
-                        <strong>Chame no WhatsApp</strong> para receber todos os detalhes da sua análise de perfil.
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Deu tudo certo!</h2>
+                    <p class="text-base text-gray-600 mb-6 leading-relaxed">
+                        <strong>Já começamos sua análise de perfil!</strong><br><br>
+                        Recebemos todas as suas informações e nossa equipe já está trabalhando na avaliação do seu caso.<br><br>
+                        <span class="text-primary font-semibold">O próximo passo é falar conosco no WhatsApp</span> para receber os detalhes da sua análise personalizada e entender melhor as suas chances de aprovação.
                     </p>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left w-full">
+                        <p class="text-sm text-blue-800">
+                            <strong>💡 O que acontece agora?</strong><br>
+                            • Analisamos seu perfil em até 24h<br>
+                            • Preparamos um relatório personalizado<br>
+                            • Entramos em contato via WhatsApp<br>
+                            • Você recebe orientações estratégicas
+                        </p>
+                    </div>
 
                     <a href="https://wa.me/5511988945503" target="_blank"
                         class="w-full sm:w-auto bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 mb-4 group no-underline">
@@ -1768,7 +1809,7 @@
                     </a>
 
                     <button type="button"
-                        class="text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors mt-6 underline decoration-transparent hover:decoration-gray-400"
+                        class="text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors mt-4 underline decoration-transparent hover:decoration-gray-400"
                         onclick="location.reload()">Preencher Novamente</button>
                 </div>
             </div>
