@@ -312,9 +312,11 @@ function submitForm() {
     }
 
     showStatus("Processando sua análise...");
-    data.session_id = sessionId; // Attach session ID to link with lead
+    data.session_id = sessionId;
+    data.status = 'completed'; // Identificador para o backend de que o formulário terminou
+    data.timestamp = new Date().toISOString();
 
-    // Handle multiple checkboxes (like fonte_renda) correctly
+    // Tratamento para múltiplos valores (checkboxes)
     const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
     checkboxes.forEach((checkbox) => {
         if (!data[checkbox.name]) {
@@ -326,6 +328,9 @@ function submitForm() {
             data[checkbox.name].push(checkbox.value);
         }
     });
+
+    // Remove campos nulos/vazios para limpar o payload (opcional, mas recomendado)
+    Object.keys(data).forEach(key => (data[key] == null || data[key] === "") && delete data[key]);
 
     console.log("Sending data:", data);
 
