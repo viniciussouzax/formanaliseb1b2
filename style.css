@@ -1,0 +1,23 @@
+/* 
+  Estilo customizado mínimo.
+  A maior parte do estilo agora é gerenciada pelo Tailwind CSS no próprio HTML.
+*/
+
+/* Garantir que inputs de data tenham altura consistente no mobile/desktop se necessário */
+input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 3.5rem;
+}
+
+/* Remover setas de input number */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: none;
+}
