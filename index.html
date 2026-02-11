@@ -1138,7 +1138,7 @@
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="estudando" value="nao" onclick="nextStep('step-4-2')"
+                            <input type="radio" name="estudando" value="nao" onclick="nextStep('step-4-1-e')"
                                 class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
@@ -1154,10 +1154,10 @@
                 </div>
             </div>
 
-            <!-- 4.1.a: Detalhes do Curso -->
+            <!-- 4.1.a: Detalhes do Curso Atual -->
             <div class="step" id="step-4-1-a" data-step="4">
                 <div class="flex flex-col h-full justify-center">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Sobre o seu curso:</h2>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Sobre o seu curso atual:</h2>
                     <div class="grid grid-cols-1 gap-4 mb-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de curso</label>
@@ -1189,7 +1189,7 @@
                 </div>
             </div>
 
-            <!-- 4.1.b: Término do Curso -->
+            <!-- 4.1.b: Término do Curso Atual -->
             <div class="step" id="step-4-1-b" data-step="4">
                 <div class="flex flex-col h-full justify-center">
                     <h2 class="text-2xl font-semibold text-gray-900 mb-2">Quando termina o curso?</h2>
@@ -1197,6 +1197,112 @@
                     <div class="mb-6">
                         <input type="month" name="estudo_termino"
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-4-1-c')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.c: Outra Formação? (Para quem estuda) -->
+            <div class="step" id="step-4-1-c" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Além deste curso, possui outra formação
+                        concluída?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe se você já possui algum diploma acadêmico ou técnico
+                        anterior.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_outra_formacao" value="sim"
+                                onclick="nextStep('step-4-1-f')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_outra_formacao" value="nao" onclick="nextStep('step-4-2')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.e: Possui Formação? (Para quem não estuda) -->
+            <div class="step" id="step-4-1-e" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui alguma formação acadêmica ou técnica
+                        concluída?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Cursos superiores, técnicos ou pós-graduações concluídas.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_formacao_concluida" value="sim"
+                                onclick="nextStep('step-4-1-f')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="possui_formacao_concluida" value="nao"
+                                onclick="nextStep('step-4-2')" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.1.f: Detalhes da Formação Concluída (Compartilhado) -->
+            <div class="step" id="step-4-1-f" data-step="4">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Detalhes da formação concluída:</h2>
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nível de formação</label>
+                            <select name="formacao_nivel"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="tecnico">Ensino Técnico</option>
+                                <option value="superior">Graduação (Superior)</option>
+                                <option value="pos">Pós-graduação / Especialização</option>
+                                <option value="mestrado">Mestrado</option>
+                                <option value="doutorado">Doutorado</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nome do curso / Área</label>
+                            <input type="text" name="formacao_nome" placeholder="Ex: Administração de Empresas"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ano de conclusão
+                                (aproximado)</label>
+                            <input type="number" name="formacao_ano" placeholder="Ex: 2018" min="1950" max="2026"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        </div>
                     </div>
                     <div class="flex justify-between items-center pt-6 border-t border-gray-100">
                         <button type="button"
