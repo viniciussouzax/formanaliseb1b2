@@ -287,11 +287,12 @@
         body > .iti__country-list {
             position: fixed !important;
             z-index: 99999 !important;
+            max-width: calc(100vw - 32px) !important; /* Limitar largura no mobile */
         }
         
         /* Garantir que o body não corte o dropdown */
         body {
-            overflow-x: visible !important;
+            overflow-x: hidden !important; /* Prevenir scroll horizontal quando dropdown abre */
         }
         
         /* Container do form não pode ter overflow hidden */

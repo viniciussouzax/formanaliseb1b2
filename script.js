@@ -582,6 +582,7 @@ function initializeITI() {
             initialCountry: 'br',
             separateDialCode: true,
             nationalMode: false,
+            dropdownContainer: document.body, // Garantir que dropdown vá para o body
         });
         
         itiInitialized = true;
@@ -591,7 +592,8 @@ function initializeITI() {
         setTimeout(() => {
             const flagContainer = document.querySelector('.iti__selected-flag');
             const arrow = document.querySelector('.iti__arrow');
-            const countryList = document.querySelector('.iti__country-list');
+            // Buscar countryList no body também, pois a biblioteca pode ter movido
+            const countryList = document.querySelector('body > .iti__country-list') || document.querySelector('.iti__country-list');
             const itiContainer = document.querySelector('.iti');
             const input = document.querySelector('#telefone');
             
