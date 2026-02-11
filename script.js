@@ -228,16 +228,32 @@ function nextStep(targetId) {
 }
 
 function checkIncomeSourceAndRedirect() {
-    const selected = document.querySelector('input[name="fonte_renda"]:checked');
-    const source = selected ? selected.value : null;
+    // Pequeno delay para o usuário ver a seleção antes de trocar de tela
+    setTimeout(() => {
+        const selected = document.querySelector('input[name="fonte_renda"]:checked');
+        const source = selected ? selected.value : null;
 
-    if (source === 'empresario') {
-        nextStep('branch-2-a-3-empresario');
-    } else if (source === 'autonomo') {
-        nextStep('branch-2-a-3-autonomo');
-    } else {
-        nextStep('step-3-1');
+        if (source === 'empresario') {
+            nextStep('branch-2-a-3-empresario');
+        } else if (source === 'autonomo') {
+            nextStep('branch-2-a-3-autonomo');
+        } else {
+            nextStep('step-3-1');
+        }
+    }, 200);
+}
+
+function formatCurrency(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value === "") {
+        input.value = "";
+        return;
     }
+    value = (parseInt(value) / 100).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    input.value = value;
 }
 
 
@@ -274,14 +290,22 @@ function toggleField(fieldId, shouldShow) {
 
 function submitForm() {
     const submitButton = document.querySelector('button[onclick="submitForm()"]');
-    const originalText = submitButton.innerText;
-    submitButton.disabled = true;
-    submitButton.innerText = "Enviando...";
+    const originalText = submitButton ? submitButton.innerText : "";
 
-    // Collect all data
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerText = "Enviando...";
+    }
+
+    // Coleta todos os dados
     const form = document.getElementById('visaForm');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+
+    // Tratamento específico para o campo de renda (remover formatação para o envio)
+    if (data.renda_mensal) {
+        data.renda_mensal = data.renda_mensal.replace(/\./g, '').replace(',', '.');
+    }
     data.session_id = sessionId; // Attach session ID to link with lead
 
     // Handle multiple checkboxes (like fonte_renda) correctly
@@ -319,25 +343,33 @@ function submitForm() {
                 localStorage.removeItem('visaFormProgress'); // Clear progress on success
             } else {
                 console.error("Error:", response);
-                submitButton.disabled = false;
-                submitButton.innerText = originalText;
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerText = originalText;
 
-                // Show inline error
-                const errorPara = document.createElement('p');
-                errorPara.className = 'error-message text-red-500 text-sm mt-4 text-center';
-                errorPara.innerText = "Ocorreu um erro ao enviar. Tente novamente.";
-                submitButton.parentElement.appendChild(errorPara);
+                    // Show inline error
+                    const errorPara = document.createElement('p');
+                    errorPara.className = 'error-message text-red-500 text-sm mt-4 text-center';
+                    errorPara.innerText = "Ocorreu um erro ao enviar. Tente novamente.";
+                    submitButton.parentElement.appendChild(errorPara);
+                } else {
+                    alert("Ocorreu um erro ao enviar. Por favor, tente novamente.");
+                }
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            submitButton.disabled = false;
-            submitButton.innerText = originalText;
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerText = originalText;
 
-            const errorPara = document.createElement('p');
-            errorPara.className = 'error-message text-red-500 text-sm mt-4 text-center';
-            errorPara.innerText = "Erro de conexão. Verifique sua internet.";
-            submitButton.parentElement.appendChild(errorPara);
+                const errorPara = document.createElement('p');
+                errorPara.className = 'error-message text-red-500 text-sm mt-4 text-center';
+                errorPara.innerText = "Erro de conexão. Verifique sua internet.";
+                submitButton.parentElement.appendChild(errorPara);
+            } else {
+                alert("Erro de conexão. Verifique sua internet e tente novamente.");
+            }
         });
 }
 

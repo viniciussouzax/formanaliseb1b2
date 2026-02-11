@@ -654,8 +654,8 @@
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none z-10">
                             <span class="text-gray-500 font-semibold text-lg">R$</span>
                         </div>
-                        <input type="number" id="renda_mensal" name="renda_mensal" placeholder="0,00" min="0"
-                            step="0.01" inputmode="decimal"
+                        <input type="text" id="renda_mensal" name="renda_mensal" placeholder="0,00" inputmode="numeric"
+                            oninput="formatCurrency(this)"
                             class="w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-xl text-xl font-semibold focus:border-primary focus:ring-4 focus:ring-gray-50 outline-none transition-all placeholder:text-gray-300">
                     </div>
                     <div class="flex justify-between items-center pt-6 border-t border-gray-100">
@@ -676,62 +676,66 @@
                     <p class="text-sm text-gray-500 mb-6">Selecione a opção que melhor descreve sua ocupação atual.</p>
                     <div class="flex flex-col gap-2 mb-6">
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="clt" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="clt" onclick="checkIncomeSourceAndRedirect()"
+                                class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Salário CLT</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="autonomo" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="autonomo"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Autônomo</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="empresario" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="empresario"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Empresário</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="investimentos" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="investimentos"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Investimentos</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="aposentado" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="aposentado"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Aposentado</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="estudante" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="estudante"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Estudante</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="fonte_renda" value="outros" class="peer sr-only">
+                            <input type="radio" name="fonte_renda" value="outros"
+                                onclick="checkIncomeSourceAndRedirect()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Outros</span>
                             </div>
                         </label>
                     </div>
-                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                    <div class="flex justify-start items-center pt-6 border-t border-gray-100">
                         <button type="button"
                             class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
                             onclick="prevStep()">Voltar</button>
-                        <button type="button"
-                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
-                            onclick="checkIncomeSourceAndRedirect()">Continuar</button>
                     </div>
                 </div>
             </div>
