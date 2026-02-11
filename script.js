@@ -788,11 +788,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Confirmação antes de sair da página
-window.addEventListener('beforeunload', (e) => {
-    if (formHasData && !formSubmitted) {
-        e.preventDefault();
-        e.returnValue = '';
-        return '';
-    }
-});
+// Confirmação antes de sair da página - DESATIVADA
+// window.addEventListener('beforeunload', (e) => {
+//     if (formHasData && !formSubmitted) {
+//         e.preventDefault();
+//         e.returnValue = '';
+//         return '';
+//     }
+// });
