@@ -196,8 +196,6 @@ function validateStep() {
 function nextStep(targetId) {
     // Validate current step before proceeding
     if (!validateStep()) {
-        // Optional: specific message
-        // alert("Por favor, preencha todos os campos obrigatórios.");
         return;
     }
 
@@ -225,6 +223,15 @@ function nextStep(targetId) {
             saveProgress(); // Save progress after navigation
         }, 300);
     }
+}
+
+function handleFinalSelection() {
+    // Pequeno delay para garantir que o rádio foi selecionado no DOM antes de processar
+    setTimeout(() => {
+        if (validateStep()) {
+            submitForm();
+        }
+    }, 200);
 }
 
 function checkIncomeSourceAndRedirect() {
@@ -256,8 +263,6 @@ function formatCurrency(input) {
     input.value = value;
 }
 
-
-
 function prevStep() {
     if (historyStack.length === 0) return;
 
@@ -279,16 +284,15 @@ function toggleField(fieldId, shouldShow) {
 
     if (shouldShow) {
         field.classList.remove('hidden');
-        // Add animation class if you want
     } else {
         field.classList.add('hidden');
-        // Clear value if hidden? Optional.
-        // const inputs = field.querySelectorAll('input, textarea, select');
-        // inputs.forEach(input => input.value = '');
     }
 }
 
 function submitForm() {
+    if (window.isSubmitting) return;
+    window.isSubmitting = true;
+
     const submitButton = document.querySelector('button[onclick="submitForm()"]');
     const originalText = submitButton ? submitButton.innerText : "";
 
@@ -311,8 +315,6 @@ function submitForm() {
     data.session_id = sessionId; // Attach session ID to link with lead
 
     // Handle multiple checkboxes (like fonte_renda) correctly
-    // Object.fromEntries only takes the last value for checking multiple boxes with same name
-    // So we need to manually aggregate them
     const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
     checkboxes.forEach((checkbox) => {
         if (!data[checkbox.name]) {
@@ -345,6 +347,7 @@ function submitForm() {
                 localStorage.removeItem('visaFormProgress'); // Clear progress on success
             } else {
                 console.error("Error:", response);
+                window.isSubmitting = false;
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.innerText = originalText;
@@ -354,6 +357,7 @@ function submitForm() {
         })
         .catch((error) => {
             console.error('Error:', error);
+            window.isSubmitting = false;
             if (submitButton) {
                 submitButton.disabled = false;
                 submitButton.innerText = originalText;
