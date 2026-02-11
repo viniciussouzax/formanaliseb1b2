@@ -600,6 +600,9 @@ function initializeITI() {
                 const positionDropdown = () => {
                     const rect = input.getBoundingClientRect();
                     const viewportWidth = window.innerWidth;
+                    const scrollY = window.scrollY || window.pageYOffset;
+                    
+                    console.log("[ITI Debug] rect.bottom:", rect.bottom, "scrollY:", scrollY, "viewportWidth:", viewportWidth);
                     
                     // Garantir que o dropdown não ultrapasse a tela no mobile
                     let leftPos = rect.left;
@@ -612,9 +615,14 @@ function initializeITI() {
                         width = Math.min(width, maxWidth);
                     }
                     
+                    // A posição top deve ser relativa à viewport (fixed), não precisa adicionar scrollY
+                    const topPos = rect.bottom + 4;
+                    
+                    console.log("[ITI Debug] Posicionando em top:", topPos, "left:", leftPos);
+                    
                     countryList.style.cssText = `
                         position: fixed !important;
-                        top: ${rect.bottom + 4}px !important;
+                        top: ${topPos}px !important;
                         left: ${leftPos}px !important;
                         z-index: 2147483647 !important;
                         max-height: 300px !important;
