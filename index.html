@@ -9,31 +9,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <!-- International Telephone Input - Versão 18+ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/css/intlTelInput.css" />
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/js/intlTelInput.min.js"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#000000',
-                        'primary-hover': '#1a1a1a',
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                colors: {
+                    primary: '#000000',
+                    'primary-hover': '#1a1a1a',
+                },
+                animation: {
+                    'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                },
+                keyframes: {
+                    fadeInUp: {
+                        '0%': { opacity: '0', transform: 'translateY(10px)' },
+                        '100%': { opacity: '1', transform: 'translateY(0)' },
                     }
                 }
             }
         }
+    }
     </script>
     <style>
         /* Custom utilities that are harder to do with just utility classes */
@@ -44,19 +45,11 @@
         .step.active {
             display: block;
             animation: fadeInUp 0.5s ease-out forwards;
+            overflow: visible !important; /* Garantir que o dropdown não seja cortado */
         }
 
         /* Hide scrollbar for clean look */
         ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
             border-radius: 4px;
         }
 
@@ -64,8 +57,278 @@
             background: #a8a8a8;
         }
 
-        .iti {
+        /* ===== INTL-TEL-INPUT - CSS ISOLADO DO TAILWIND ===== */
+        
+        /* Container do telefone */
+        .telefone-container {
+            position: relative;
             width: 100%;
+            z-index: 9999; /* Garantir que fique acima de outros elementos */
+        }
+        
+        /* Garantir que o step não corte o dropdown */
+        .step {
+            overflow: visible !important;
+        }
+        
+        /* Container principal do plugin quando ativo */
+        .iti.iti--allow-dropdown {
+            position: relative !important;
+            z-index: auto;
+        }
+        
+        /* Input base (isolado das classes Tailwind) */
+        .telefone-input {
+            width: 100% !important;
+            height: 48px !important;
+            padding: 12px 16px 12px 110px !important;
+            font-size: 16px !important;
+            line-height: 24px !important;
+            color: #111827 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            font-family: inherit !important;
+        }
+        
+        .telefone-input:focus {
+            outline: none !important;
+            border-color: #000000 !important;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Container principal do plugin */
+        .iti {
+            position: relative !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        
+        /* Container da bandeira (flag-container) */
+        .iti__flag-container {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            z-index: 10 !important;
+        }
+        
+        /* Botão/bandeira selecionada */
+        .iti__selected-flag {
+            display: flex !important;
+            align-items: center !important;
+            height: 46px !important;
+            margin-top: 1px !important;
+            margin-left: 1px !important;
+            padding: 0 12px !important;
+            background-color: #f3f4f6 !important;
+            border: none !important;
+            border-radius: 7px 0 0 7px !important;
+            cursor: pointer !important;
+        }
+        
+        /* Bandeira do país */
+        .iti__selected-flag .iti__flag {
+            width: 20px !important;
+            height: 14px !important;
+            margin-right: 6px !important;
+            box-shadow: 0 0 1px rgba(0,0,0,0.3) !important;
+            flex-shrink: 0 !important;
+        }
+        
+        /* ===== DDI (CÓDIGO DO PAÍS) - VISIBILIDADE FORÇADA ===== */
+        .iti__selected-dial-code {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            color: #374151 !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 4px 0 0 !important;
+            font-family: inherit !important;
+            white-space: nowrap !important;
+            min-width: 30px !important;
+        }
+        
+        /* Quando separateDialCode está ativo */
+        .iti--separate-dial-code .iti__selected-flag {
+            background-color: #f3f4f6 !important;
+        }
+        
+        .iti--separate-dial-code .iti__selected-dial-code {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Seta do dropdown */
+        .iti__arrow {
+            margin-left: 6px !important;
+            width: 0 !important;
+            height: 0 !important;
+            border-left: 3px solid transparent !important;
+            border-right: 3px solid transparent !important;
+            border-top: 4px solid #6b7280 !important;
+        }
+        
+        /* Dropdown de países - MODAL/Lista */
+        .iti__country-list {
+            position: fixed !important; /* FIXED para sair do contexto */
+            top: auto !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            z-index: 2147483647 !important; /* MÁXIMO possível */
+            max-height: 300px !important;
+            width: 320px !important;
+            min-width: 280px !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            list-style: none !important;
+            padding: 4px 0 !important;
+            margin: 0 !important;
+            display: none; /* Inicialmente escondido */
+        }
+        
+        /* Mostrar quando NÃO tem classe hide */
+        .iti__country-list:not(.iti__hide) {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Quando tem classe hide */
+        .iti__country-list.iti__hide {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
+        /* Container do plugin quando dropdown aberto */
+        .iti--allow-dropdown.iti--container,
+        .iti.iti--container {
+            position: relative !important;
+        }
+        
+        /* Garantir que o dropdown esteja acima de tudo */
+        .iti--allow-dropdown .iti__dropdown-content,
+        .iti__dropdown-content {
+            position: absolute !important;
+            z-index: 99999 !important;
+        }
+        
+        /* Cada item da lista */
+        .iti__country {
+            display: flex !important;
+            align-items: center !important;
+            padding: 10px 16px !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            color: #374151 !important;
+            background-color: transparent !important;
+        }
+        
+        .iti__country:hover,
+        .iti__country.iti__highlight {
+            background-color: #f3f4f6 !important;
+        }
+        
+        .iti__country .iti__flag {
+            margin-right: 10px !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .iti__country-name {
+            flex: 1 !important;
+            margin-right: 8px !important;
+        }
+        
+        .iti__dial-code {
+            color: #6b7280 !important;
+            font-weight: 500 !important;
+        }
+        
+        /* Forçar visibilidade do dropdown quando aberto */
+        .iti__country-list:not(.iti__hide) {
+            display: block !important;
+        }
+        
+        /* Classe hide da biblioteca */
+        .iti__hide {
+            display: none !important;
+        }
+        
+        /* Container quando dropdown está aberto */
+        .iti--allow-dropdown.iti--show-flags .iti__country-list {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Fix para o dropdown aparecer */
+        .iti--allow-dropdown {
+            position: relative !important;
+        }
+        
+        .iti--allow-dropdown .iti__dropdown-content {
+            position: absolute !important;
+            z-index: 99999 !important;
+        }
+        
+        /* Quando o dropdown é movido para o body (algumas versões fazem isso) */
+        body > .iti__country-list {
+            position: fixed !important;
+            z-index: 99999 !important;
+        }
+        
+        /* Garantir que o body não corte o dropdown */
+        body {
+            overflow-x: visible !important;
+        }
+        
+        /* Container do form não pode ter overflow hidden */
+        main, form, .step, .telefone-container {
+            overflow: visible !important;
+        }
+        
+        /* Específico para o step-0 onde está o telefone */
+        #step-0 {
+            overflow: visible !important;
+            position: relative !important;
+            z-index: 100 !important;
+        }
+        
+        /* Se o dropdown for movido para fora do container */
+        .iti--container .iti__country-list,
+        body .iti__country-list {
+            z-index: 99999 !important;
+        }
+        
+        /* Forçar visibilidade quando aberto (sobrescreve qualquer regra) */
+        .iti__country-list[style*="display: block"],
+        .iti__country-list:not([style*="display: none"]):not(.iti__hide) {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Hide helper */
+        .hide, .hidden {
+            display: none !important;
+        }
+        
+        /* Mobile */
+        @media (max-width: 640px) {
+            .telefone-input {
+                font-size: 16px !important;
+            }
         }
 
         @media (max-width: 640px) {
@@ -93,7 +356,7 @@
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4 text-gray-800 font-sans">
 
     <!-- Header / Nav -->
-    <nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-100 z-50 h-16 flex items-center justify-center">
+    <nav class="fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-center">
         <img src="logo-preto.png" alt="Análise Visto Americano" class="h-10 w-auto object-contain">
     </nav>
 
@@ -113,7 +376,7 @@
                         <!-- Nome Completo -->
                         <div>
                             <label for="nome_completo" class="block text-sm font-medium text-gray-700 mb-1">Nome
-                                Completo</label>
+                                Completo <span class="text-red-500">*</span></label>
                             <input type="text" id="nome_completo" name="nome_completo" placeholder="Ex: João Silva"
                                 required
                                 class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
@@ -121,18 +384,19 @@
 
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail <span
+                                    class="text-red-500">*</span></label>
                             <input type="email" id="email" name="email" placeholder="seu@email.com" required
                                 class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
 
                         <!-- Telefone -->
-                        <div>
+                        <div class="telefone-container">
                             <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone /
-                                WhatsApp</label>
+                                WhatsApp <span class="text-red-500">*</span></label>
                             <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" required
-                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
-                            <span id="error-msg" class="hide text-red-500 text-sm"></span>
+                                class="telefone-input">
+                            <span id="error-msg" class="hidden text-red-500 text-sm mt-1 block"></span>
                         </div>
                     </div>
 
@@ -141,6 +405,55 @@
                             class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
                             onclick="submitLeadAndContinue()">
                             Começar Análise
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === STEP 0-TRUTH: COMPROMISSO COM A VERDADE === -->
+            <div class="step" id="step-0-truth" data-step="0">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Compromisso com a verdade</h2>
+
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-lg">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-amber-800 leading-relaxed">
+                                    A análise só funciona quando você fornece <strong>respostas verdadeiras, sem
+                                        mentiras ou omissões</strong>, pois é a partir delas que identificamos
+                                    corretamente se o seu perfil é forte, ajustável ou crítico.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-base text-gray-700 mb-6 leading-relaxed">
+                        Com base nas suas respostas honestas, apontamos os ajustes necessários para atender às
+                        exigências e aos critérios do visto americano B1/B2, garantindo a <strong>qualidade e a
+                            assertividade da análise</strong>.
+                    </p>
+
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8 text-center">
+                        <p class="text-sm text-gray-700 font-medium">
+                            Eu me comprometo a fornecer informações verdadeiras e completas durante toda a análise
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('step-1')">
+                            Serei verdadeiro(a)
                         </button>
                     </div>
                 </div>
@@ -907,37 +1220,7 @@
 
             <!-- === STEP 3: DEMOGRÁFICO === -->
 
-            <!-- 3.0: Passport -->
-            <div class="step" id="step-3-0" data-step="3">
-                <div class="flex flex-col h-full justify-center">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui passaporte válido?</h2>
-                    <p class="text-sm text-gray-500 mb-6">O governo americano exige validade de pelo menos 6 meses além
-                        da estadia.</p>
-                    <div class="flex flex-col gap-2">
-                        <label class="group relative cursor-pointer">
-                            <input type="radio" name="passaporte_valido" value="sim" onclick="nextStep('step-1')"
-                                class="peer sr-only">
-                            <div
-                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
-                                <span class="font-medium text-sm">Sim</span>
-                            </div>
-                        </label>
-                        <label class="group relative cursor-pointer">
-                            <input type="radio" name="passaporte_valido" value="nao" onclick="nextStep('step-1')"
-                                class="peer sr-only">
-                            <div
-                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
-                                <span class="font-medium text-sm">Não</span>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="mt-6">
-                        <button type="button"
-                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
-                            onclick="prevStep()">Voltar</button>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- 3.1: Idade -->
             <div class="step" id="step-3-1" data-step="3">
@@ -1389,18 +1672,21 @@
                     </div>
                     <h2 class="text-4xl font-bold text-gray-900 mb-4">Tudo certo!</h2>
                     <p class="text-lg text-gray-600 mb-10 leading-relaxed">
-                        Recebemos suas informações com sucesso.<br>
-                        Nossa equipe de especialistas já começou a analisar o seu perfil para traçar a melhor estratégia
-                        de visto.
+                        Recebemos suas informações com sucesso!<br><br>
+                        <strong>Importante:</strong> Para receber o resultado da sua análise, você precisa nos chamar no
+                        WhatsApp no botão abaixo. <br><br>
+                        Nossa equipe avaliará seu perfil individualmente. Se entendermos que podemos ajudar, faremos uma
+                        proposta de assessoria personalizada. Caso contrário, daremos a orientação do caminho ideal que
+                        você deve seguir de acordo com as suas necessidades.
                     </p>
 
-                    <a href="https://wa.me/" target="_blank"
+                    <a href="https://wa.me/5511988945503" target="_blank"
                         class="w-full sm:w-auto bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 mb-4 group no-underline">
                         <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                         </svg>
-                        Falar no WhatsApp
+                        Falar com Especialista
                     </a>
 
                     <button type="button"
@@ -1430,6 +1716,8 @@
         </div>
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
 
