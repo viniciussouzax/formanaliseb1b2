@@ -293,6 +293,20 @@
             right: 16px !important;
         }
         
+        /* Limitar largura do dropdown no mobile para evitar scroll horizontal */
+        @media (max-width: 640px) {
+            .iti--container .iti__dropdown-content,
+            .iti__dropdown-content {
+                max-width: calc(100vw - 32px) !important;
+                width: calc(100vw - 32px) !important;
+            }
+            
+            .iti__country-list {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+        
         /* Garantir que o body não corte o dropdown */
         body {
             overflow-x: hidden !important;
