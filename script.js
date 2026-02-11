@@ -37,7 +37,11 @@ function saveProgress() {
     const inputs = document.querySelectorAll('input, select, textarea');
 
     inputs.forEach(input => {
-        if (input.type === 'radio' || input.type === 'checkbox') {
+        if (input.type === 'radio') {
+            if (input.checked) {
+                formData[input.name] = input.value;
+            }
+        } else if (input.type === 'checkbox') {
             if (input.checked) {
                 if (!formData[input.name]) {
                     formData[input.name] = [];
@@ -109,8 +113,14 @@ function resumeForm() {
     inputs.forEach(input => {
         const val = state.data[input.name];
         if (val) {
-            if (input.type === 'radio' || input.type === 'checkbox') {
+            if (input.type === 'radio') {
+                if (val === input.value) {
+                    input.checked = true;
+                }
+            } else if (input.type === 'checkbox') {
                 if (Array.isArray(val) && val.includes(input.value)) {
+                    input.checked = true;
+                } else if (val === input.value) {
                     input.checked = true;
                 }
             } else {
@@ -132,7 +142,7 @@ function resumeForm() {
 
     const modal = document.getElementById('resumeModal');
     if (modal) modal.classList.add('hidden');
-    
+
     setTimeout(() => {
         if (!itiInitialized) initializeITI();
     }, 100);
@@ -146,7 +156,7 @@ function restartForm() {
     historyStack = [];
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('step-0').classList.add('active');
-    
+
     if (iti && itiInitialized) {
         iti.destroy();
         iti = null;
@@ -190,8 +200,12 @@ function validateStep() {
 
         if (input.id === 'telefone') {
             if (iti && itiInitialized) {
-                if (!iti.isValidNumber()) {
-                    showError(input, "Telefone inválido.");
+                try {
+                    if (iti.isValidNumber && !iti.isValidNumber()) {
+                        showError(input, "Telefone inválido.");
+                    }
+                } catch (e) {
+                    console.warn("[ITI] Falha ao validar (provavelmente utilsScript não carregado):", e);
                 }
             } else {
                 const phoneValue = input.value.replace(/\D/g, '');
@@ -207,7 +221,7 @@ function validateStep() {
                 const selectedDate = new Date(input.value);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                
+
                 // Para data de negativa, não pode ser data futura
                 if (input.id === 'data_negativa' && selectedDate > today) {
                     showError(input, "Data da negativa não pode ser futura.");
@@ -226,7 +240,8 @@ function validateStep() {
         } else if (input.type === 'radio' || input.type === 'checkbox') {
             return;
         } else {
-            if (!input.value.trim()) {
+            const optionalFields = ['duvidas_principais', 'info_importante'];
+            if (!input.value.trim() && !optionalFields.includes(input.name)) {
                 showError(input, "Este campo é obrigatório.");
             } else if (input.type === 'email') {
                 // Validação mais robusta de email
@@ -237,7 +252,7 @@ function validateStep() {
             } else if (input.type === 'number' || input.inputMode === 'numeric') {
                 // Validações específicas para campos numéricos
                 const numValue = parseFloat(input.value);
-                
+
                 if (input.id === 'idade') {
                     if (isNaN(numValue) || numValue < 1 || numValue > 120) {
                         showError(input, "Idade deve estar entre 1 e 120 anos.");
@@ -247,9 +262,17 @@ function validateStep() {
                     if (isNaN(numValue) || numValue < 1950 || numValue > currentYear) {
                         showError(input, `Ano deve estar entre 1950 e ${currentYear}.`);
                     }
-                } else if (input.name === 'qtd_funcionarios' || input.name === 'filhos_qtd') {
+                } else if (input.name === 'qtd_funcionarios') {
                     if (isNaN(numValue) || numValue < 0) {
                         showError(input, "Valor não pode ser negativo.");
+                    }
+                } else if (input.name === 'filhos_qtd') {
+                    if (isNaN(numValue) || numValue < 1) {
+                        showError(input, "Informe a quantidade de filhos (mínimo 1).");
+                    }
+                } else if (input.name === 'tempo_adicional') {
+                    if (isNaN(numValue) || numValue < 1) {
+                        showError(input, "Informe a quantidade de dias (mínimo 1).");
                     }
                 } else if (input.name === 'tempo_empresa' || input.name === 'tempo_empresa_abertura') {
                     if (isNaN(numValue) || numValue < 0 || numValue > 50) {
@@ -314,8 +337,14 @@ function updateProgress() {
     const stepAttr = activeStep.getAttribute('data-step');
     if (!stepAttr) return;
 
-    const currentStep = parseInt(stepAttr);
+    let currentStep;
     const totalSteps = 4;
+
+    if (stepAttr === 'final') {
+        currentStep = totalSteps;
+    } else {
+        currentStep = parseInt(stepAttr);
+    }
 
     const progress = Math.min(100, Math.round((currentStep / totalSteps) * 100));
 
@@ -338,6 +367,14 @@ function sanitizeString(str) {
 function nextStep(targetId, skipValidation) {
     if (!skipValidation && !validateStep()) {
         return;
+    }
+
+    if (targetId && typeof handleStep43Navigation === 'function') {
+        if (handleStep43Navigation(targetId)) return;
+    }
+
+    if (targetId && typeof handleStep4Navigation === 'function') {
+        if (handleStep4Navigation(targetId)) return;
     }
 
     const currentStep = document.querySelector('.step.active');
@@ -377,6 +414,23 @@ function handleFinalSelection() {
     }, 200);
 }
 
+// Logic to skip Business Question if already Entrepreneur
+function handleStep43Navigation(targetId) {
+    if (targetId === 'step-4-3') {
+        const incomeSource = document.querySelector('input[name="fonte_renda"]:checked');
+        if (incomeSource && incomeSource.value === 'empresario') {
+            console.log("[LOGIC] Skipping step-4-3 because user is entrepreneur");
+            // Auto-fill to avoid validation errors if we want to save 'Sim'
+            // But better just to leave it null or handle in backend.
+            // Let's just skip to next step which is 'step-duvidas'
+            // We need to push the skipped step to history? No, just skip key.
+            nextStep('step-duvidas', true);
+            return true; // Handled
+        }
+    }
+    return false; // Not handled
+}
+
 function checkIncomeSourceAndRedirect() {
     setTimeout(() => {
         const selected = document.querySelector('input[name="fonte_renda"]:checked');
@@ -390,6 +444,20 @@ function checkIncomeSourceAndRedirect() {
             nextStep('step-3-1', true);
         }
     }, 200);
+}
+
+// Logic to route Sponsored/Company trips to Occupation Question in Step 4
+function handleStep4Navigation(targetId) {
+    if (targetId === 'step-4-1') { // Entering Step 4
+        // Check "Quem paga"
+        const payer = document.querySelector('input[name="pagador"]:checked');
+        if (payer && (payer.value === 'patrocinador' || payer.value === 'empresa')) {
+            console.log("[LOGIC] Redirecting to Occupation Question (Sponsored/Company)");
+            nextStep('step-4-0-occupation', true);
+            return true; // Handled
+        }
+    }
+    return false;
 }
 
 function formatCurrency(input) {
@@ -416,11 +484,6 @@ function prevStep() {
 
     const inputs = prevStepEl.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
-        if (input.type === 'radio' || input.type === 'checkbox') {
-            input.checked = false;
-        } else {
-            input.value = '';
-        }
         input.classList.remove('border-red-500', 'bg-red-50');
     });
 
@@ -458,6 +521,15 @@ function submitForm() {
         submitButton.innerText = "Enviando...";
     }
 
+    if (!validateStep()) {
+        window.isSubmitting = false;
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerText = originalText;
+        }
+        return;
+    }
+
     const form = document.getElementById('visaForm');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
@@ -472,86 +544,91 @@ function submitForm() {
     }
 
     // Converter renda_mensal de formato brasileiro (1.234,56) para número
-    if (data.renda_mensal) {
-        // Remove pontos de milhar e troca vírgula decimal por ponto
-        data.renda_mensal = parseFloat(data.renda_mensal.replace(/\./g, '').replace(',', '.'));
-    }
-    
-    // Converter datas de yyyy-mm-dd para dd/mm/yyyy
-    const dateFields = ['data_negativa', 'ultima_entrada', 'data_entrada_atual', 'formacao_data'];
-    dateFields.forEach(field => {
-        if (data[field] && data[field].includes('-')) {
-            const [year, month, day] = data[field].split('-');
+    const numericValue = data.renda_mensal.replace(/[^\d,]/g, '').replace(',', '.');
+    data.renda_mensal = parseFloat(numericValue);
+}
+
+if (data.renda_patrocinador && typeof data.renda_patrocinador === 'string') {
+    const numericValue = data.renda_patrocinador.replace(/[^\d,]/g, '').replace(',', '.');
+    data.renda_patrocinador = parseFloat(numericValue);
+}
+
+// Converter datas de yyyy-mm-dd para dd/mm/yyyy
+const dateFields = ['data_negativa', 'ultima_entrada', 'data_entrada_atual', 'formacao_data', 'estudo_termino'];
+dateFields.forEach(field => {
+    if (data[field] && typeof data[field] === 'string' && data[field].includes('-')) {
+        const parts = data[field].split('-');
+        if (parts.length === 3) {
+            const [year, month, day] = parts;
             data[field] = `${day}/${month}/${year}`;
+        } else if (parts.length === 2) {
+            const [year, month] = parts;
+            data[field] = `${month}/${year}`;
         }
-    });
-    
-    // Converter data de término do curso de yyyy-mm-dd para dd/mm/yyyy
-    if (data.estudo_termino && data.estudo_termino.includes('-')) {
-        const [year, month, day] = data.estudo_termino.split('-');
-        data.estudo_termino = `${day}/${month}/${year}`;
     }
+});
 
-    data.session_id = sessionId;
-    data.status = 'completed';
-    data.timestamp = new Date().toISOString();
+data.session_id = sessionId;
+data.status = 'completed';
+data.timestamp = new Date().toISOString();
 
-    const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
-    checkboxes.forEach((checkbox) => {
-        if (!data[checkbox.name]) {
-            data[checkbox.name] = [];
-        } else if (!Array.isArray(data[checkbox.name])) {
-            data[checkbox.name] = [data[checkbox.name]];
-        }
-        if (Array.isArray(data[checkbox.name]) && !data[checkbox.name].includes(checkbox.value)) {
-            data[checkbox.name].push(checkbox.value);
-        }
-    });
+const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+checkboxes.forEach((checkbox) => {
+    if (!data[checkbox.name]) {
+        data[checkbox.name] = [];
+    } else if (!Array.isArray(data[checkbox.name])) {
+        data[checkbox.name] = [data[checkbox.name]];
+    }
+    if (Array.isArray(data[checkbox.name]) && !data[checkbox.name].includes(checkbox.value)) {
+        data[checkbox.name].push(checkbox.value);
+    }
+});
 
+// Sanitização e Limpeza ANTES da sincronização
+Object.keys(data).forEach(key => {
+    if (data[key] == null || data[key] === "") {
+        delete data[key];
+    } else if (typeof data[key] === 'string') {
+        data[key] = sanitizeString(data[key]);
+    }
+});
+
+formSubmitted = true;
+syncToSupabase('step-final', data);
+
+console.log("Sending data:", data);
+
+const goToFinalScreen = () => {
+    const currentStep = document.querySelector('.step.active');
+    if (currentStep) currentStep.classList.remove('active');
+    const finalStep = document.getElementById('step-final');
+    if (finalStep) finalStep.classList.add('active');
+    localStorage.removeItem('visaFormProgress');
+    window.isSubmitting = false;
     formSubmitted = true;
-    syncToSupabase('step-final', data);
+};
 
-    Object.keys(data).forEach(key => {
-        if (data[key] == null || data[key] === "") {
-            delete data[key];
-        } else if (typeof data[key] === 'string') {
-            data[key] = sanitizeString(data[key]);
-        }
-    });
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    console.log("Sending data:", data);
-
-    const goToFinalScreen = () => {
-        const currentStep = document.querySelector('.step.active');
-        if (currentStep) currentStep.classList.remove('active');
-        const finalStep = document.getElementById('step-final');
-        if (finalStep) finalStep.classList.add('active');
-        localStorage.removeItem('visaFormProgress');
-        window.isSubmitting = false;
-        formSubmitted = true;
-    };
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    fetch('https://team-sereno-club-sereno-361266c9.flowfuse.cloud/analise', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-        signal: controller.signal
+fetch('https://team-sereno-club-sereno-361266c9.flowfuse.cloud/analise', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    signal: controller.signal
+})
+    .then(response => {
+        clearTimeout(timeoutId);
+        console.log("Success:", response);
+        goToFinalScreen();
     })
-        .then(response => {
-            clearTimeout(timeoutId);
-            console.log("Success:", response);
-            goToFinalScreen();
-        })
-        .catch((error) => {
-            clearTimeout(timeoutId);
-            console.error('Error:', error);
-            goToFinalScreen();
-        });
+    .catch((error) => {
+        clearTimeout(timeoutId);
+        console.error('Error:', error);
+        goToFinalScreen();
+    });
 }
 
 function showStatus(message, isError = false) {
@@ -578,7 +655,7 @@ function submitLeadAndContinue() {
 
     const nome = document.getElementById('nome_completo');
     const email = document.getElementById('email');
-    
+
     let telefoneFull = '';
     if (iti && itiInitialized) {
         telefoneFull = iti.getNumber();
@@ -619,17 +696,17 @@ function submitLeadAndContinue() {
 // ===== INTL-TEL-INPUT - VERSÃO SIMPLIFICADA =====
 function initializeITI() {
     const input = document.querySelector("#telefone");
-    
+
     if (!input) {
         console.warn("[ITI] Input não encontrado");
         return;
     }
-    
+
     // Evitar reinicialização
     if (itiInitialized || input.dataset.intlTelInputId) {
         return;
     }
-    
+
     // Verificar biblioteca
     const intlFunc = window.intlTelInput || (typeof intlTelInput !== 'undefined' ? intlTelInput : null);
     if (!intlFunc) {
@@ -637,10 +714,10 @@ function initializeITI() {
         setTimeout(initializeITI, 300);
         return;
     }
-    
+
     try {
         console.log("[ITI] Inicializando...");
-        
+
         iti = intlFunc(input, {
             utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/js/utils.js",
             preferredCountries: ['br', 'us', 'pt'],
@@ -648,10 +725,10 @@ function initializeITI() {
             separateDialCode: true,
             nationalMode: false,
         });
-        
+
         itiInitialized = true;
         console.log("[ITI] OK! DDI deve estar visível.");
-        
+
         // Verificar elementos e configurar dropdown
         setTimeout(() => {
             const flagContainer = document.querySelector('.iti__selected-flag');
@@ -659,7 +736,7 @@ function initializeITI() {
             const countryList = document.querySelector('.iti__country-list');
             const itiContainer = document.querySelector('.iti');
             const input = document.querySelector('#telefone');
-            
+
             if (countryList && input) {
                 // Posicionar dropdown logo abaixo do input
                 const positionDropdown = () => {
@@ -685,16 +762,16 @@ function initializeITI() {
                         opacity: 1 !important;
                     `;
                 };
-                
+
                 // Função para toggle
                 const toggleDropdown = (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    
-                    const isHidden = countryList.style.display === 'none' || 
-                                   countryList.classList.contains('iti__hide') ||
-                                   window.getComputedStyle(countryList).display === 'none';
-                    
+
+                    const isHidden = countryList.style.display === 'none' ||
+                        countryList.classList.contains('iti__hide') ||
+                        window.getComputedStyle(countryList).display === 'none';
+
                     if (isHidden) {
                         positionDropdown();
                         countryList.classList.remove('iti__hide');
@@ -705,27 +782,27 @@ function initializeITI() {
                         console.log("[ITI] Dropdown FECHADO");
                     }
                 };
-                
+
                 // Adicionar listener
                 if (flagContainer) {
                     flagContainer.addEventListener('click', toggleDropdown);
                     flagContainer.style.cursor = 'pointer';
                 }
-                
+
                 // Atualizar posição no scroll/resize
                 window.addEventListener('scroll', () => {
                     if (countryList.style.display !== 'none') {
                         positionDropdown();
                     }
                 }, true);
-                
+
                 window.addEventListener('resize', () => {
                     if (countryList.style.display !== 'none') {
                         positionDropdown();
                     }
                 });
             }
-            
+
             console.log("[ITI] Elementos:", {
                 itiContainer: !!itiContainer,
                 flagContainer: !!flagContainer,
@@ -734,7 +811,7 @@ function initializeITI() {
                 countries: countryList ? countryList.querySelectorAll('.iti__country').length : 0
             });
         }, 500);
-        
+
     } catch (e) {
         console.error("[ITI] Erro:", e);
     }
@@ -749,10 +826,10 @@ document.addEventListener('DOMContentLoaded', () => {
             input.setAttribute('max', today);
         }
     });
-    
+
     // Reativado: verificar se existe progresso salvo
     checkSavedProgress();
-    
+
     // Múltiplas tentativas de inicialização
     initializeITI();
     setTimeout(initializeITI, 200);
@@ -765,12 +842,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (onclickAttr && onclickAttr.includes('nextStep')) {
             radio.removeAttribute('onclick');
 
-            const match = onclickAttr.match(/nextStep\(['"]([^'"]+)['"]\)/);
+            const match = onclickAttr.match(/nextStep\s*\(\s*['"]([^'"]+)['"]/);
             if (match) {
                 const targetId = match[1];
+                const skipValidation = onclickAttr.includes(', true');
                 radio.addEventListener('change', function () {
                     setTimeout(() => {
-                        nextStep(targetId, true);
+                        nextStep(targetId, skipValidation);
                     }, 150);
                 });
             }
@@ -800,3 +878,14 @@ document.addEventListener('DOMContentLoaded', () => {
 //         return '';
 //     }
 // });
+// Navigation Logic for Travel History Exit
+function handleTravelHistoryExit() {
+    const tipoSolicitacao = document.querySelector('input[name="solicitacao_tipo"]:checked')?.value;
+    console.log("[NAV] Travel History Exit. Tipo:", tipoSolicitacao);
+
+    if (tipoSolicitacao === 'renovacao') {
+        nextStep('branch-1-c-1');
+    } else {
+        nextStep('step-2');
+    }
+}

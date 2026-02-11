@@ -568,7 +568,7 @@
 
                         <label class="group relative cursor-pointer">
                             <input type="radio" name="solicitacao_tipo" value="renovacao"
-                                onclick="nextStep('branch-1-c-1')" class="peer sr-only">
+                                onclick="nextStep('branch-1-a-1')" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Renovação de visto</span>
@@ -615,8 +615,8 @@
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="viagem_internacional" value="nao" onclick="nextStep('step-2')"
-                                class="peer sr-only">
+                            <input type="radio" name="viagem_internacional" value="nao"
+                                onclick="handleTravelHistoryExit()" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Não</span>
@@ -641,6 +641,20 @@
                         <textarea id="paises_visitados" name="paises_visitados"
                             placeholder="Liste os países e ano da viagem (ex: França 2022, Argentina 2023)" rows="4"
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <!-- PREVIOUS STAY DURATION (KILL SWITCH) -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Qual o período máximo que já
+                            permaneceu nos EUA?</label>
+                        <select name="tempo_estadia_maxima" required
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all bg-white">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="menos_1_mes">Menos de 1 mês</option>
+                            <option value="1_3_meses">Entre 1 e 3 meses</option>
+                            <option value="3_6_meses">Entre 3 e 6 meses (Risco)</option>
+                            <option value="mais_6_meses">Mais de 6 meses (Alto Risco)</option>
+                        </select>
                     </div>
 
                     <div class="flex justify-between items-center pt-8 border-t border-gray-100">
@@ -677,18 +691,25 @@
                 </div>
             </div>
 
-            <!-- 1.B.2: Relato -->
+            <!-- 1.B.2: Relato e Motivo -->
             <div class="step" id="branch-1-b-2" data-step="1">
                 <div class="flex flex-col h-full justify-center">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Conte brevemente o que aconteceu na entrevista
-                        anterior</h2>
-                    <p class="text-lg text-gray-500 mb-6">Descreva sua experiência, o que foi perguntado, sua resposta e
-                        o motivo da negativa.</p>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Detalhes da Negativa</h2>
+
+                    <p class="text-sm text-gray-500 mb-2">Qual foi o motivo alegado pelo oficial? (Ex: Carta 214b, falta
+                        de vínculos).</p>
+                    <div class="mb-4">
+                        <input type="text" name="motivo_negativa_codigo" placeholder="Motivo alegado (se souber)"
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-2">Relate brevemente como foi a entrevista:</p>
                     <div class="mb-8">
-                        <textarea id="relato_negativa" name="relato_negativa" rows="6"
-                            placeholder="Ex: O cônsul perguntou sobre meus vínculos no Brasil e eu não soube explicar bem meu trabalho atual..."
+                        <textarea id="relato_negativa" name="relato_negativa" rows="5"
+                            placeholder="O que foi perguntado e o que você respondeu..."
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all resize-none"></textarea>
                     </div>
+
                     <div class="flex justify-between items-center pt-8 border-t border-gray-100">
                         <button type="button"
                             class="text-gray-500 hover:text-gray-800 font-medium px-4 py-2 transition-colors"
@@ -989,6 +1010,24 @@
             <!-- === STEP 2: FINANCEIRO === -->
             <div class="step" id="step-2" data-step="2">
                 <div class="flex flex-col h-full justify-center">
+
+                    <!-- 2.0: Detalhes da Viagem (KILL SWITCH) -->
+                    <div class="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                        <h3 class="text-lg font-bold text-blue-900 mb-4">Planejamento da Viagem</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-blue-800 mb-1">Destino Pretendido</label>
+                                <input type="text" name="destino_viagem" placeholder="Ex: Orlando, FL" required
+                                    class="w-full p-3 border border-blue-200 rounded-lg focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-blue-800 mb-1">Duração (Dias)</label>
+                                <input type="number" name="duracao_viagem" placeholder="Ex: 15" min="1" required
+                                    class="w-full p-3 border border-blue-200 rounded-lg focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
                     <h2 class="text-2xl font-semibold text-gray-900 mb-2">Quem pagará a viagem?</h2>
                     <p class="text-sm text-gray-500 mb-6">A origem dos recursos é um ponto chave na análise consular.
                     </p>
@@ -1053,6 +1092,33 @@
                             oninput="formatCurrency(this)"
                             class="w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-xl text-xl font-semibold focus:border-primary focus:ring-4 focus:ring-gray-50 outline-none transition-all placeholder:text-gray-300">
                     </div>
+
+                    <!-- IR CHECK -->
+                    <div class="mt-6 mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Essa renda é declarada no Imposto de
+                            Renda?</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="total"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Sim, valor integral</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="parcial"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Sim, parcialmente</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="declaracao_ir" value="isento"
+                                    class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Sou isento / Não declaro</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center pt-6 border-t border-gray-100">
                         <button type="button"
                             class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
@@ -1140,27 +1206,37 @@
                 <div class="flex flex-col h-full justify-center">
                     <h2 class="text-2xl font-semibold text-gray-900 mb-6">Informações da empresa:</h2>
                     <div class="grid grid-cols-1 gap-4 mb-6">
+                        <!-- BUSINESS DETAILS (STRATEGIC) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de funcionários</label>
-                            <input type="number" name="qtd_funcionarios" min="0" placeholder="Ex: 5 funcionários"
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de funcionários
+                                (CLT/PJ)</label>
+                            <input type="number" name="qtd_funcionarios" min="0" placeholder="Ex: 5" required
                                 class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tempo de abertura (anos)</label>
-                            <input type="number" name="tempo_empresa_abertura" min="0" step="0.5"
-                                placeholder="Ex: 3 anos"
-                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Sede</label>
+                            <select name="tipo_sede" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all bg-white">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="fisica">Sede Física / Comercial</option>
+                                <option value="home_office">Home Office / Residência</option>
+                                <option value="coworking">Coworking / Virtual</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
-                        <button type="button"
-                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
-                            onclick="prevStep()">Voltar</button>
-                        <button type="button"
-                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
-                            onclick="nextStep('step-3-1')">Continuar</button>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tempo de abertura (anos)</label>
+                        <input type="number" name="tempo_empresa_abertura" min="0" step="0.5" placeholder="Ex: 3 anos"
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                     </div>
                 </div>
+                <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                    <button type="button"
+                        class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                        onclick="prevStep()">Voltar</button>
+                    <button type="button"
+                        class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                        onclick="nextStep('step-3-1')">Continuar</button>
+                </div>
+            </div>
             </div>
 
             <!-- Branch 2.A.3: Detalhes Autônomo -->
@@ -1248,6 +1324,31 @@
                             onclick="prevStep()">Voltar</button>
                         <button type="button"
                             class="bg-primary hover:bg-primary-hover text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                            onclick="nextStep('branch-2-b-renda')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2.B.3: Renda do Patrocinador (NOVO) -->
+            <div class="step" id="branch-2-b-renda" data-step="2">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Qual é a renda mensal do seu patrocinador?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe o valor aproximado que pode ser comprovado
+                        (Extratos/IR).</p>
+                    <div class="relative mb-6">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none z-10">
+                            <span class="text-gray-500 font-semibold text-lg">R$</span>
+                        </div>
+                        <input type="text" id="renda_patrocinador" name="renda_patrocinador" placeholder="0,00" required
+                            inputmode="numeric" oninput="formatCurrency(this)"
+                            class="w-full pl-16 pr-4 py-4 border-2 border-gray-200 rounded-xl text-xl font-semibold focus:border-primary focus:ring-4 focus:ring-gray-50 outline-none transition-all placeholder:text-gray-300">
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
+                        <button type="button"
+                            class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
                             onclick="nextStep('step-3-1')">Continuar</button>
                     </div>
                 </div>
@@ -1332,8 +1433,8 @@
                     <p class="text-sm text-gray-500 mb-6">Selecione sua situação civil legal atual.</p>
                     <div class="flex flex-col gap-2">
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="estado_civil" value="solteiro" onclick="nextStep('step-3-3')"
-                                class="peer sr-only">
+                            <input type="radio" name="estado_civil" value="solteiro"
+                                onclick="nextStep('step-3-relatives')" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Solteiro(a)</span>
@@ -1348,15 +1449,15 @@
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="estado_civil" value="divorciado" onclick="nextStep('step-3-3')"
-                                class="peer sr-only">
+                            <input type="radio" name="estado_civil" value="divorciado"
+                                onclick="nextStep('step-3-relatives')" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
                                 <span class="font-medium text-sm">Divorciado(a)</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="estado_civil" value="viuvo" onclick="nextStep('step-3-3')"
+                            <input type="radio" name="estado_civil" value="viuvo" onclick="nextStep('step-3-relatives')"
                                 class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
@@ -1395,7 +1496,113 @@
                             onclick="prevStep()">Voltar</button>
                         <button type="button"
                             class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
-                            onclick="nextStep('step-3-2-citizen')">Continuar</button>
+                            onclick="nextStep('step-3-relatives')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.3: Parentes nos EUA (RISK MITIGATION) -->
+            <div class="step" id="step-3-relatives" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Tem parentes diretos nos EUA?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Pai, mãe, irmão(ã), cônjuge ou filhos.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="parentes_eua" value="sim"
+                                onclick="toggleField('div_parentes_detalhes', true)" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, tenho parentes diretos</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="parentes_eua" value="nao"
+                                onclick="toggleField('div_parentes_detalhes', false); nextStep('step-3-companions')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Detalhes Parentes -->
+                    <div id="div_parentes_detalhes" class="hidden mt-6 animate-fade-in-up">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quem? (Selecione todos)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                        value="pai"
+                                        class="rounded text-primary focus:ring-primary"><span>Pai</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                        value="mae"
+                                        class="rounded text-primary focus:ring-primary"><span>Mãe</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                        value="irmao"
+                                        class="rounded text-primary focus:ring-primary"><span>Irmão/Irmã</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                        value="conjuge"
+                                        class="rounded text-primary focus:ring-primary"><span>Cônjuge</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="parentes_quem"
+                                        value="filho"
+                                        class="rounded text-primary focus:ring-primary"><span>Filho(a)</span></label>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Legal Deles</label>
+                            <select name="parentes_status"
+                                class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:border-primary outline-none">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="cidadao">Cidadão Americano</option>
+                                <option value="green_card">Residente Permanente (Green Card)</option>
+                                <option value="visto_estudante">Visto de Estudante</option>
+                                <option value="visto_trabalho">Visto de Trabalho</option>
+                                <option value="indocumentado">Indocumentado / Irregular</option>
+                                <option value="turista">Turista</option>
+                            </select>
+                        </div>
+                        <button type="button"
+                            class="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                            onclick="nextStep('step-3-companions')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.4: Companheiros de Viagem (RISK MITIGATION) -->
+            <div class="step" id="step-3-companions" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Pretende viajar sozinho(a)?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Informe se haverá acompanhantes.</p>
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="viaja_sozinho" value="sim"
+                                onclick="toggleField('div_companheiros', false); nextStep('step-3-3')"
+                                class="peer sr-only"> <!-- Goes to Kids (step-3-3) -->
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, viajarei sozinho(a)</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="viaja_sozinho" value="nao"
+                                onclick="toggleField('div_companheiros', true)" class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não, viajarei acompanhado</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div id="div_companheiros" class="hidden mt-6 animate-fade-in-up">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quem irá com você?</label>
+                        <input type="text" name="companheiros_nomes" placeholder="Ex: Esposa e filhos, Amigo..."
+                            class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+
+                        <div class="mt-4 flex justify-end">
+                            <button type="button"
+                                class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
+                                onclick="nextStep('step-3-3')">Continuar</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1447,7 +1654,7 @@
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="tem_filhos" value="nao" onclick="nextStep('step-4-1')"
+                            <input type="radio" name="tem_filhos" value="nao" onclick="nextStep('step-3-5')"
                                 class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
@@ -1479,7 +1686,43 @@
                             onclick="prevStep()">Voltar</button>
                         <button type="button"
                             class="bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2.5 px-6 rounded-lg shadow-sm hover:shadow transition-all"
-                            onclick="nextStep('step-4-1')">Continuar</button>
+                            onclick="nextStep('step-3-5')">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.5: Antecedentes (KILL SWITCH) -->
+            <div class="step" id="step-3-5" data-step="3">
+                <div class="flex flex-col h-full justify-center">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Histórico de Antecedentes</h2>
+                    <p class="text-sm text-gray-500 mb-6">Questões de segurança são prioritárias.</p>
+
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Já teve problemas com a justiça ou imigração
+                        (deportação, overstay)?</h3>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="antecedentes_criminais" value="sim" onclick="nextStep('step-4-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Sim, já tive problemas</span>
+                            </div>
+                        </label>
+                        <label class="group relative cursor-pointer">
+                            <input type="radio" name="antecedentes_criminais" value="nao" onclick="nextStep('step-4-1')"
+                                class="peer sr-only">
+                            <div
+                                class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
+                                <span class="font-medium text-sm">Não, nunca tive problemas</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="mt-6">
+                        <button type="button"
+                            class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
+                            onclick="prevStep()">Voltar</button>
                     </div>
                 </div>
             </div>
@@ -1536,6 +1779,12 @@
                                 <option value="pos">Pós-graduação / Mestrado / Doutorado</option>
                                 <option value="outro">Outro (Cursos livres, idiomas, etc)</option>
                             </select>
+                        </div>
+                        <!-- EDUCATION SEMESTER (STRATEGIC - AGE 18-24) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Semestre / Período Atual</label>
+                            <input type="text" name="estudo_semestre" placeholder="Ex: 4º Semestre / 2º Ano" required
+                                class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">O que você estuda?</label>
@@ -1665,7 +1914,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Data de conclusão
                                 (aproximada)</label>
-                            <input type="date" name="formacao_data" 
+                            <input type="date" name="formacao_data"
                                 class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                         </div>
                     </div>
@@ -1712,27 +1961,28 @@
                 </div>
             </div>
 
-            <!-- 4.3: Empresa? -->
+            <!-- 4.3: Outros Negócios? -->
             <div class="step" id="step-4-3" data-step="4">
                 <div class="flex flex-col h-full justify-center">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui empresa ou negócio próprio?</h2>
-                    <p class="text-sm text-gray-500 mb-6">Ter um negócio ativo no Brasil é um dos vínculos mais fortes
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Possui participações societárias ou outros
+                        negócios no Brasil?</h2>
+                    <p class="text-sm text-gray-500 mb-6">Ter vínculos empresariais ativos é um dos pontos mais fortes
                         para o visto.</p>
                     <div class="flex flex-col gap-2">
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="empresa_propria" value="sim" onclick="nextStep('step-duvidas', true)"
-                                class="peer sr-only">
+                            <input type="radio" name="outros_negocios" value="sim"
+                                onclick="nextStep('step-duvidas', true)" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
-                                <span class="font-medium text-sm">Sim</span>
+                                <span class="font-medium text-sm">Sim, possuo</span>
                             </div>
                         </label>
                         <label class="group relative cursor-pointer">
-                            <input type="radio" name="empresa_propria" value="nao" onclick="nextStep('step-duvidas', true)"
-                                class="peer sr-only">
+                            <input type="radio" name="outros_negocios" value="nao"
+                                onclick="nextStep('step-duvidas', true)" class="peer sr-only">
                             <div
                                 class="p-4 border border-gray-200 rounded-lg bg-white transition-all hover:border-gray-400 peer-checked:border-primary peer-checked:bg-gray-50/50 peer-checked:text-primary">
-                                <span class="font-medium text-sm">Não</span>
+                                <span class="font-medium text-sm">Não possuo</span>
                             </div>
                         </label>
                     </div>
@@ -1749,21 +1999,23 @@
                 <div class="flex flex-col h-full justify-center">
                     <h2 class="text-2xl font-semibold text-gray-900 mb-2">Dúvidas e informações importantes</h2>
                     <p class="text-sm text-gray-500 mb-6">Queremos conhecer melhor seu caso.</p>
-                    
+
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Quais são suas principais dúvidas sobre o processo do visto?</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quais são suas principais dúvidas
+                            sobre o processo do visto?</label>
                         <textarea id="duvidas_principais" name="duvidas_principais" rows="3"
                             placeholder="Ex: Quanto tempo demora? Posso aplicar sozinho? Tenho medo da entrevista..."
                             class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
                     </div>
-                    
+
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">O que você acredita ser importante a gente saber sobre você e seu caso?</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">O que você acredita ser importante a
+                            gente saber sobre você e seu caso?</label>
                         <textarea id="info_importante" name="info_importante" rows="4"
                             placeholder="Conte-nos detalhes que possam ser relevantes para sua análise. Sua história, preocupações, expectativas..."
                             class="w-full p-3 border border-gray-300 rounded-lg text-base focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
                     </div>
-                    
+
                     <div class="flex justify-between items-center pt-6 border-t border-gray-100">
                         <button type="button"
                             class="text-gray-500 hover:text-gray-800 text-sm font-medium px-4 py-2 transition-colors"
@@ -1785,10 +2037,12 @@
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Deu tudo certo!</h2>
                     <p class="text-base text-gray-600 mb-6 leading-relaxed">
                         <strong>Já começamos sua análise de perfil!</strong><br><br>
-                        Recebemos todas as suas informações e nossa equipe já está trabalhando na avaliação do seu caso.<br><br>
-                        <span class="text-primary font-semibold">O próximo passo é falar conosco no WhatsApp</span> para receber os detalhes da sua análise personalizada e entender melhor as suas chances de aprovação.
+                        Recebemos todas as suas informações e nossa equipe já está trabalhando na avaliação do seu
+                        caso.<br><br>
+                        <span class="text-primary font-semibold">O próximo passo é falar conosco no WhatsApp</span> para
+                        receber os detalhes da sua análise personalizada e entender melhor as suas chances de aprovação.
                     </p>
-                    
+
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left w-full">
                         <p class="text-sm text-blue-800">
                             <strong>💡 O que acontece agora?</strong><br>
