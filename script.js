@@ -148,6 +148,7 @@ function restartForm() {
     document.getElementById('step-0').classList.add('active');
     
     if (iti && itiInitialized) {
+        cleanupDropdownListeners(); // Limpar listeners antes de destruir
         iti.destroy();
         iti = null;
         itiInitialized = false;
@@ -190,8 +191,17 @@ function validateStep() {
 
         if (input.id === 'telefone') {
             if (iti && itiInitialized) {
-                if (!iti.isValidNumber()) {
-                    showError(input, "Telefone inválido.");
+                // Verificar se utils.js está carregado antes de validar
+                try {
+                    if (iti.isValidNumber && !iti.isValidNumber()) {
+                        showError(input, "Telefone inválido.");
+                    }
+                } catch (e) {
+                    // Fallback se utils.js não carregou ainda
+                    const phoneValue = input.value.replace(/\D/g, '');
+                    if (phoneValue.length < 10) {
+                        showError(input, "Telefone inválido.");
+                    }
                 }
             } else {
                 const phoneValue = input.value.replace(/\D/g, '');
@@ -551,7 +561,11 @@ function submitLeadAndContinue() {
     nextStep('step-0-truth');
 }
 
-// ===== INTL-TEL-INPUT - VERSÃO SIMPLIFICADA =====
+// ===== INTL-TEL-INPUT - VERSÃO OTIMIZADA =====
+// Referências para cleanup (evitar memory leaks)
+let itiScrollHandler = null;
+let itiResizeHandler = null;
+
 function initializeITI() {
     const input = document.querySelector("#telefone");
     
@@ -560,15 +574,16 @@ function initializeITI() {
         return;
     }
     
-    // Evitar reinicialização
-    if (itiInitialized || input.dataset.intlTelInputId) {
+    // Evitar reinicialização - VERIFICAÇÃO ROBUSTA
+    if (itiInitialized || input.dataset.intlTelInputId || iti !== null) {
+        console.log("[ITI] Já inicializado, ignorando...");
         return;
     }
     
     // Verificar biblioteca
     const intlFunc = window.intlTelInput || (typeof intlTelInput !== 'undefined' ? intlTelInput : null);
     if (!intlFunc) {
-        console.warn("[ITI] Biblioteca não carregada");
+        console.warn("[ITI] Biblioteca não carregada ainda, tentando novamente...");
         setTimeout(initializeITI, 300);
         return;
     }
@@ -587,100 +602,9 @@ function initializeITI() {
         itiInitialized = true;
         console.log("[ITI] OK! DDI deve estar visível.");
         
-        // Verificar elementos e configurar dropdown
+        // Verificar elementos e configurar dropdown (após inicialização da lib)
         setTimeout(() => {
-            const flagContainer = document.querySelector('.iti__selected-flag');
-            const arrow = document.querySelector('.iti__arrow');
-            const countryList = document.querySelector('.iti__country-list');
-            const itiContainer = document.querySelector('.iti');
-            const input = document.querySelector('#telefone');
-            
-            if (countryList && input) {
-                // Posicionar dropdown logo abaixo do input
-                const positionDropdown = () => {
-                    const rect = input.getBoundingClientRect();
-                    const viewportWidth = window.innerWidth;
-                    
-                    // Garantir que o dropdown não ultrapasse a tela no mobile
-                    let leftPos = rect.left;
-                    let width = rect.width;
-                    
-                    if (viewportWidth <= 640) {
-                        // No mobile: garantir margem mínima de 16px dos lados
-                        leftPos = Math.max(16, leftPos);
-                        const maxWidth = viewportWidth - 32; // 16px de margem em cada lado
-                        width = Math.min(width, maxWidth);
-                    }
-                    
-                    countryList.style.cssText = `
-                        position: fixed !important;
-                        top: ${rect.bottom + 4}px !important;
-                        left: ${leftPos}px !important;
-                        z-index: 2147483647 !important;
-                        max-height: 300px !important;
-                        width: ${width}px !important;
-                        min-width: 280px !important;
-                        overflow-y: auto !important;
-                        background-color: #ffffff !important;
-                        border: 1px solid #d1d5db !important;
-                        border-radius: 8px !important;
-                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-                        list-style: none !important;
-                        padding: 4px 0 !important;
-                        margin: 0 !important;
-                        display: block !important;
-                        visibility: visible !important;
-                        opacity: 1 !important;
-                    `;
-                };
-                
-                // Função para toggle
-                const toggleDropdown = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const isHidden = countryList.style.display === 'none' || 
-                                   countryList.classList.contains('iti__hide') ||
-                                   window.getComputedStyle(countryList).display === 'none';
-                    
-                    if (isHidden) {
-                        positionDropdown();
-                        countryList.classList.remove('iti__hide');
-                        console.log("[ITI] Dropdown ABERTO em:", input.getBoundingClientRect());
-                    } else {
-                        countryList.style.display = 'none';
-                        countryList.classList.add('iti__hide');
-                        console.log("[ITI] Dropdown FECHADO");
-                    }
-                };
-                
-                // Adicionar listener
-                if (flagContainer) {
-                    flagContainer.addEventListener('click', toggleDropdown);
-                    flagContainer.style.cursor = 'pointer';
-                }
-                
-                // Atualizar posição no scroll/resize
-                window.addEventListener('scroll', () => {
-                    if (countryList.style.display !== 'none') {
-                        positionDropdown();
-                    }
-                }, true);
-                
-                window.addEventListener('resize', () => {
-                    if (countryList.style.display !== 'none') {
-                        positionDropdown();
-                    }
-                });
-            }
-            
-            console.log("[ITI] Elementos:", {
-                itiContainer: !!itiContainer,
-                flagContainer: !!flagContainer,
-                arrow: !!arrow,
-                countryList: !!countryList,
-                countries: countryList ? countryList.querySelectorAll('.iti__country').length : 0
-            });
+            setupDropdownListeners();
         }, 500);
         
     } catch (e) {
@@ -688,15 +612,130 @@ function initializeITI() {
     }
 }
 
+// Função separada para configurar listeners do dropdown
+function setupDropdownListeners() {
+    const flagContainer = document.querySelector('.iti__selected-flag');
+    const arrow = document.querySelector('.iti__arrow');
+    const countryList = document.querySelector('.iti__country-list');
+    const itiContainer = document.querySelector('.iti');
+    const input = document.querySelector('#telefone');
+    
+    if (!countryList || !input) {
+        console.warn("[ITI] Elementos do dropdown não encontrados");
+        return;
+    }
+    
+    // Limpar listeners antigos se existirem (evitar duplicação)
+    cleanupDropdownListeners();
+    
+    // Posicionar dropdown logo abaixo do input
+    const positionDropdown = () => {
+        const rect = input.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        
+        // Garantir que o dropdown não ultrapasse a tela no mobile
+        let leftPos = rect.left;
+        let width = rect.width;
+        
+        if (viewportWidth <= 640) {
+            // No mobile: garantir margem mínima de 16px dos lados
+            leftPos = Math.max(16, leftPos);
+            const maxWidth = viewportWidth - 32; // 16px de margem em cada lado
+            width = Math.min(width, maxWidth);
+        }
+        
+        countryList.style.cssText = `
+            position: fixed !important;
+            top: ${rect.bottom + 4}px !important;
+            left: ${leftPos}px !important;
+            z-index: 2147483647 !important;
+            max-height: 300px !important;
+            width: ${width}px !important;
+            min-width: 280px !important;
+            overflow-y: auto !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            list-style: none !important;
+            padding: 4px 0 !important;
+            margin: 0 !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        `;
+    };
+    
+    // Função para toggle
+    const toggleDropdown = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const isHidden = countryList.style.display === 'none' || 
+                       countryList.classList.contains('iti__hide') ||
+                       window.getComputedStyle(countryList).display === 'none';
+        
+        if (isHidden) {
+            positionDropdown();
+            countryList.classList.remove('iti__hide');
+            console.log("[ITI] Dropdown ABERTO");
+        } else {
+            countryList.style.display = 'none';
+            countryList.classList.add('iti__hide');
+            console.log("[ITI] Dropdown FECHADO");
+        }
+    };
+    
+    // Handlers nomeados para poder remover depois
+    itiScrollHandler = () => {
+        if (countryList.style.display !== 'none') {
+            positionDropdown();
+        }
+    };
+    
+    itiResizeHandler = () => {
+        if (countryList.style.display !== 'none') {
+            positionDropdown();
+        }
+    };
+    
+    // Adicionar listener no flag container
+    if (flagContainer) {
+        flagContainer.addEventListener('click', toggleDropdown);
+        flagContainer.style.cursor = 'pointer';
+    }
+    
+    // Atualizar posição no scroll/resize
+    window.addEventListener('scroll', itiScrollHandler, true);
+    window.addEventListener('resize', itiResizeHandler);
+    
+    console.log("[ITI] Elementos:", {
+        itiContainer: !!itiContainer,
+        flagContainer: !!flagContainer,
+        arrow: !!arrow,
+        countryList: !!countryList,
+        countries: countryList ? countryList.querySelectorAll('.iti__country').length : 0
+    });
+}
+
+// Função para limpar listeners (evitar memory leaks)
+function cleanupDropdownListeners() {
+    if (itiScrollHandler) {
+        window.removeEventListener('scroll', itiScrollHandler, true);
+        itiScrollHandler = null;
+    }
+    if (itiResizeHandler) {
+        window.removeEventListener('resize', itiResizeHandler);
+        itiResizeHandler = null;
+    }
+}
+
 // Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     checkSavedProgress();
     
-    // Múltiplas tentativas de inicialização
+    // Inicialização única do ITI (a função já tem retry interno)
     initializeITI();
-    setTimeout(initializeITI, 200);
-    setTimeout(initializeITI, 500);
-    setTimeout(initializeITI, 1000);
 
     // Interceptar radio buttons
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
@@ -731,10 +770,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Confirmação antes de sair da página
+// Confirmação antes de sair da página (padrão moderno - apenas returnValue)
 window.addEventListener('beforeunload', (e) => {
     if (formHasData && !formSubmitted) {
-        e.preventDefault();
         e.returnValue = '';
         return '';
     }
