@@ -599,13 +599,26 @@ function initializeITI() {
                 // Posicionar dropdown logo abaixo do input
                 const positionDropdown = () => {
                     const rect = input.getBoundingClientRect();
+                    const viewportWidth = window.innerWidth;
+                    
+                    // Garantir que o dropdown não ultrapasse a tela no mobile
+                    let leftPos = rect.left;
+                    let width = rect.width;
+                    
+                    if (viewportWidth <= 640) {
+                        // No mobile: garantir margem mínima de 16px dos lados
+                        leftPos = Math.max(16, leftPos);
+                        const maxWidth = viewportWidth - 32; // 16px de margem em cada lado
+                        width = Math.min(width, maxWidth);
+                    }
+                    
                     countryList.style.cssText = `
                         position: fixed !important;
                         top: ${rect.bottom + 4}px !important;
-                        left: ${rect.left}px !important;
+                        left: ${leftPos}px !important;
                         z-index: 2147483647 !important;
                         max-height: 300px !important;
-                        width: ${rect.width}px !important;
+                        width: ${width}px !important;
                         min-width: 280px !important;
                         overflow-y: auto !important;
                         background-color: #ffffff !important;
