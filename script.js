@@ -216,6 +216,10 @@ function validateStep() {
                 else if (input.id === 'ultima_entrada' && selectedDate > today) {
                     showError(input, "Data de entrada não pode ser futura.");
                 }
+                // Para data de término do curso, deve ser data futura
+                else if (input.name === 'estudo_termino' && selectedDate <= today) {
+                    showError(input, "Data de término deve ser futura.");
+                }
             }
         } else if (input.tagName === 'SELECT') {
             if (!input.value || input.value === "") showError(input, "Selecione uma opção.");
@@ -482,10 +486,10 @@ function submitForm() {
         }
     });
     
-    // Converter mês/ano de yyyy-mm para mm/yyyy
+    // Converter data de término do curso de yyyy-mm-dd para dd/mm/yyyy
     if (data.estudo_termino && data.estudo_termino.includes('-')) {
-        const [year, month] = data.estudo_termino.split('-');
-        data.estudo_termino = `${month}/${year}`;
+        const [year, month, day] = data.estudo_termino.split('-');
+        data.estudo_termino = `${day}/${month}/${year}`;
     }
 
     data.session_id = sessionId;

@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Solicite sua análise de visto americano B1/B2 de forma estratégica. Preencha nosso formulário e receba orientação personalizada.">
+    <meta name="description"
+        content="Solicite sua análise de visto americano B1/B2 de forma estratégica. Preencha nosso formulário e receba orientação personalizada.">
     <meta name="theme-color" content="#000000">
     <meta property="og:title" content="Solicitação de Visto B1/B2 - Formulário Estratégico">
     <meta property="og:description" content="Análise estratégica do seu perfil para visto americano B1/B2.">
@@ -19,28 +20,28 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/css/intlTelInput.css" />
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.5.3/build/js/intlTelInput.min.js" defer></script>
     <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                fontFamily: {
-                    sans: ['Inter', 'sans-serif'],
-                },
-                colors: {
-                    primary: '#000000',
-                    'primary-hover': '#1a1a1a',
-                },
-                animation: {
-                    'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
-                },
-                keyframes: {
-                    fadeInUp: {
-                        '0%': { opacity: '0', transform: 'translateY(10px)' },
-                        '100%': { opacity: '1', transform: 'translateY(0)' },
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#000000',
+                        'primary-hover': '#1a1a1a',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
         }
-    }
     </script>
     <style>
         /* Custom utilities that are harder to do with just utility classes */
@@ -51,7 +52,8 @@
         .step.active {
             display: block;
             animation: fadeInUp 0.5s ease-out forwards;
-            overflow: visible !important; /* Garantir que o dropdown não seja cortado */
+            overflow: visible !important;
+            /* Garantir que o dropdown não seja cortado */
         }
 
         /* Hide scrollbar for clean look */
@@ -64,25 +66,26 @@
         }
 
         /* ===== INTL-TEL-INPUT - CSS ISOLADO DO TAILWIND ===== */
-        
+
         /* Container do telefone */
         .telefone-container {
             position: relative;
             width: 100%;
-            z-index: 9999; /* Garantir que fique acima de outros elementos */
+            z-index: 9999;
+            /* Garantir que fique acima de outros elementos */
         }
-        
+
         /* Garantir que o step não corte o dropdown */
         .step {
             overflow: visible !important;
         }
-        
+
         /* Container principal do plugin quando ativo */
         .iti.iti--allow-dropdown {
             position: relative !important;
             z-index: auto;
         }
-        
+
         /* Input base (isolado das classes Tailwind) */
         .telefone-input {
             width: 100% !important;
@@ -98,20 +101,20 @@
             margin: 0 !important;
             font-family: inherit !important;
         }
-        
+
         .telefone-input:focus {
             outline: none !important;
             border-color: #000000 !important;
             box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
         }
-        
+
         /* Container principal do plugin */
         .iti {
             position: relative !important;
             display: block !important;
             width: 100% !important;
         }
-        
+
         /* Container da bandeira (flag-container) */
         .iti__flag-container {
             position: absolute !important;
@@ -120,7 +123,7 @@
             bottom: 0 !important;
             z-index: 10 !important;
         }
-        
+
         /* Botão/bandeira selecionada */
         .iti__selected-flag {
             display: flex !important;
@@ -134,16 +137,16 @@
             border-radius: 7px 0 0 7px !important;
             cursor: pointer !important;
         }
-        
+
         /* Bandeira do país */
         .iti__selected-flag .iti__flag {
             width: 20px !important;
             height: 14px !important;
             margin-right: 6px !important;
-            box-shadow: 0 0 1px rgba(0,0,0,0.3) !important;
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0.3) !important;
             flex-shrink: 0 !important;
         }
-        
+
         /* ===== DDI (CÓDIGO DO PAÍS) - VISIBILIDADE FORÇADA ===== */
         .iti__selected-dial-code {
             display: inline-block !important;
@@ -159,18 +162,18 @@
             white-space: nowrap !important;
             min-width: 30px !important;
         }
-        
+
         /* Quando separateDialCode está ativo */
         .iti--separate-dial-code .iti__selected-flag {
             background-color: #f3f4f6 !important;
         }
-        
+
         .iti--separate-dial-code .iti__selected-dial-code {
             display: inline-block !important;
             visibility: visible !important;
             opacity: 1 !important;
         }
-        
+
         /* Seta do dropdown */
         .iti__arrow {
             margin-left: 6px !important;
@@ -180,19 +183,22 @@
             border-right: 3px solid transparent !important;
             border-top: 4px solid #6b7280 !important;
         }
-        
+
         /* Dropdown de países - MODAL/Lista */
         .iti__country-list {
-            position: fixed !important; /* FIXED para sair do contexto */
+            position: fixed !important;
+            /* FIXED para sair do contexto */
             top: auto !important;
             bottom: auto !important;
             left: auto !important;
             right: auto !important;
-            z-index: 2147483647 !important; /* MÁXIMO possível */
+            z-index: 2147483647 !important;
+            /* MÁXIMO possível */
             max-height: 300px !important;
             width: 320px !important;
             min-width: 280px !important;
-            max-width: calc(100vw - 32px) !important; /* Limitar largura no mobile */
+            max-width: calc(100vw - 32px) !important;
+            /* Limitar largura no mobile */
             overflow-y: auto !important;
             overflow-x: hidden !important;
             background-color: #ffffff !important;
@@ -202,22 +208,23 @@
             list-style: none !important;
             padding: 4px 0 !important;
             margin: 0 !important;
-            display: none; /* Inicialmente escondido */
+            display: none;
+            /* Inicialmente escondido */
         }
-        
+
         /* Mostrar quando NÃO tem classe hide */
         .iti__country-list:not(.iti__hide) {
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
         }
-        
+
         /* Quando tem classe hide */
         .iti__country-list.iti__hide {
             display: none !important;
             visibility: hidden !important;
         }
-        
+
         /* Container do plugin quando dropdown aberto */
         .iti--allow-dropdown.iti--container,
         .iti.iti--container {
@@ -225,7 +232,7 @@
             width: 100% !important;
             max-width: 100% !important;
         }
-        
+
         /* CORREÇÃO: Transformar fullscreen-popup em modal centralizado */
         .iti.iti--container.iti--fullscreen-popup {
             position: fixed !important;
@@ -239,21 +246,21 @@
             align-items: center !important;
             justify-content: center !important;
         }
-        
+
         .iti.iti--container.iti--fullscreen-popup .iti__dropdown-content {
             position: relative !important;
             width: 90% !important;
             max-width: 320px !important;
             max-height: 80vh !important;
         }
-        
+
         /* Garantir que o dropdown esteja acima de tudo */
         .iti--allow-dropdown .iti__dropdown-content,
         .iti__dropdown-content {
             position: absolute !important;
             z-index: 99999 !important;
         }
-        
+
         /* Cada item da lista */
         .iti__country {
             display: flex !important;
@@ -264,56 +271,56 @@
             color: #374151 !important;
             background-color: transparent !important;
         }
-        
+
         .iti__country:hover,
         .iti__country.iti__highlight {
             background-color: #f3f4f6 !important;
         }
-        
+
         .iti__country .iti__flag {
             margin-right: 10px !important;
             flex-shrink: 0 !important;
         }
-        
+
         .iti__country-name {
             flex: 1 !important;
             margin-right: 8px !important;
         }
-        
+
         .iti__dial-code {
             color: #6b7280 !important;
             font-weight: 500 !important;
         }
-        
+
         /* Forçar visibilidade do dropdown quando aberto */
         .iti__country-list:not(.iti__hide) {
             display: block !important;
         }
-        
+
         /* Classe hide da biblioteca */
         .iti__hide {
             display: none !important;
         }
-        
+
         /* Container quando dropdown está aberto */
         .iti--allow-dropdown.iti--show-flags .iti__country-list {
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
         }
-        
+
         /* Fix para o dropdown aparecer */
         .iti--allow-dropdown {
             position: relative !important;
         }
-        
+
         .iti--allow-dropdown .iti__dropdown-content {
             position: absolute !important;
             z-index: 99999 !important;
         }
-        
+
         /* Quando o dropdown é movido para o body - posicionar corretamente */
-        body > .iti__country-list {
+        body>.iti__country-list {
             position: absolute !important;
             z-index: 99999 !important;
             max-width: 100% !important;
@@ -321,56 +328,60 @@
             left: 16px !important;
             right: 16px !important;
         }
-        
+
         /* Limitar largura do dropdown no mobile para evitar scroll horizontal */
         @media (max-width: 640px) {
+
             .iti--container .iti__dropdown-content,
             .iti__dropdown-content {
                 max-width: calc(100vw - 32px) !important;
                 width: calc(100vw - 32px) !important;
             }
-            
+
             .iti__country-list {
                 width: 100% !important;
                 max-width: 100% !important;
             }
         }
-        
+
         /* Garantir que o body não corte o dropdown */
         body {
             overflow-x: hidden !important;
             position: relative !important;
         }
-        
+
         /* Container do form não pode ter overflow hidden */
-        main, form, .step, .telefone-container {
+        main,
+        form,
+        .step,
+        .telefone-container {
             overflow: visible !important;
         }
-        
+
         /* Específico para o step-0 onde está o telefone */
         #step-0 {
             overflow: visible !important;
             position: relative !important;
             z-index: 100 !important;
         }
-        
+
         /* Página final - ajustes */
         #step-final {
             padding-top: 4rem !important;
             min-height: calc(100vh - 4rem) !important;
         }
-        
+
         #step-final .flex-col {
             justify-content: flex-start !important;
             padding-top: 2rem !important;
         }
-        
+
         /* Se o dropdown for movido para fora do container */
         .iti--container .iti__country-list,
         body .iti__country-list {
             z-index: 99999 !important;
         }
-        
+
         /* Forçar visibilidade quando aberto (sobrescreve qualquer regra) */
         .iti__country-list[style*="display: block"],
         .iti__country-list:not([style*="display: none"]):not(.iti__hide) {
@@ -378,18 +389,19 @@
             visibility: visible !important;
             opacity: 1 !important;
         }
-        
+
         /* Hide helper */
-        .hide, .hidden {
+        .hide,
+        .hidden {
             display: none !important;
         }
-        
+
         /* Mobile */
         @media (max-width: 640px) {
             .telefone-input {
                 font-size: 16px !important;
             }
-            
+
             /* Garantir que o dropdown não cause scroll horizontal */
             .iti__country-list {
                 position: fixed !important;
@@ -651,7 +663,7 @@
                     <p class="text-sm text-gray-500 mb-6">Precisamos saber a data aproximada para entender o tempo
                         decorrido desde a última tentativa.</p>
                     <div class="mb-8">
-                        <input type="date" id="data_negativa" name="data_negativa" max=""
+                        <input type="date" id="data_negativa" name="data_negativa"
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
                     </div>
                     <div class="flex justify-between items-center pt-8 border-t border-gray-100">
@@ -720,7 +732,7 @@
                     <p class="text-sm text-gray-500 mb-6">Esta data é importante para verificar se você cumpriu os
                         prazos de estadias anteriores.</p>
                     <div class="mb-8">
-                        <input type="date" id="ultima_entrada" name="ultima_entrada" max=""
+                        <input type="date" id="ultima_entrada" name="ultima_entrada"
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
                     </div>
                     <div class="flex justify-between items-center pt-8 border-t border-gray-100">
@@ -898,7 +910,7 @@
                     <p class="text-sm text-gray-500 mb-6">Informe o dia em que você entrou no país nesta viagem atual.
                     </p>
                     <div class="mb-8">
-                        <input type="date" id="data_entrada_atual" name="data_entrada_atual" max=""
+                        <input type="date" id="data_entrada_atual" name="data_entrada_atual"
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
                     </div>
                     <div class="flex justify-between items-center pt-8 border-t border-gray-100">
@@ -1548,7 +1560,7 @@
                     <h2 class="text-2xl font-semibold text-gray-900 mb-2">Quando termina o curso?</h2>
                     <p class="text-sm text-gray-500 mb-6">Informe a data prevista para a conclusão dos estudos.</p>
                     <div class="mb-6">
-                        <input type="month" name="estudo_termino"
+                        <input type="date" name="estudo_termino"
                             class="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-primary focus:ring-4 focus:ring-gray-100/50 outline-none transition-all">
                     </div>
                     <div class="flex justify-between items-center pt-6 border-t border-gray-100">
@@ -1736,13 +1748,14 @@
             <!-- FINAL SUCCESS SCREEN -->
             <div class="step" id="step-final" data-step="final">
                 <div class="flex flex-col h-full items-center justify-center text-center max-w-lg mx-auto pt-20">
-                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                    <div
+                        class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
                         <span class="text-4xl">✅</span>
                     </div>
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Tudo certo!</h2>
                     <p class="text-base text-gray-600 mb-8 leading-relaxed">
-                        Recebemos suas informações!<br>
-                        <strong>Chame no WhatsApp</strong> para receber sua análise.
+                        Falta apenas 1 passo!<br>
+                        <strong>Chame no WhatsApp</strong> para receber todos os detalhes da sua análise de perfil.
                     </p>
 
                     <a href="https://wa.me/5511988945503" target="_blank"
@@ -1751,7 +1764,7 @@
                             <path
                                 d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                         </svg>
-                        Falar com Especialista
+                        Chamar no WhatsApp agora
                     </a>
 
                     <button type="button"
@@ -1764,7 +1777,8 @@
     </main>
 
     <!-- Resume Modal -->
-    <div id="resumeModal" class="fixed inset-0 bg-black bg-opacity-50 z-[2147483647] hidden flex items-center justify-center p-4">
+    <div id="resumeModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-[2147483647] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 transform transition-all scale-100">
             <h3 class="text-xl font-bold text-gray-900 mb-2">Continuar preenchimento?</h3>
             <p class="text-gray-600 mb-6">Encontramos um preenchimento em andamento. Deseja continuar de onde parou?</p>
