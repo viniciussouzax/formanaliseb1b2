@@ -305,6 +305,17 @@
             z-index: 100 !important;
         }
         
+        /* Página final - ajustes */
+        #step-final {
+            padding-top: 4rem !important;
+            min-height: calc(100vh - 4rem) !important;
+        }
+        
+        #step-final .flex-col {
+            justify-content: flex-start !important;
+            padding-top: 2rem !important;
+        }
+        
         /* Se o dropdown for movido para fora do container */
         .iti--container .iti__country-list,
         body .iti__country-list {
@@ -356,7 +367,7 @@
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4 text-gray-800 font-sans">
 
     <!-- Header / Nav -->
-    <nav class="fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-center">
+    <nav class="fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-center bg-gray-50">
         <img src="logo-preto.png" alt="Análise Visto Americano" class="h-10 w-auto object-contain">
     </nav>
 
@@ -1664,20 +1675,15 @@
 
 
             <!-- FINAL SUCCESS SCREEN -->
-            <div class="step" id="step-final">
-                <div class="flex flex-col h-full items-center justify-center text-center max-w-lg mx-auto">
-                    <div
-                        class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8 animate-bounce">
-                        <span class="text-5xl">✅</span>
+            <div class="step" id="step-final" data-step="final">
+                <div class="flex flex-col h-full items-center justify-center text-center max-w-lg mx-auto pt-20">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                        <span class="text-4xl">✅</span>
                     </div>
-                    <h2 class="text-4xl font-bold text-gray-900 mb-4">Tudo certo!</h2>
-                    <p class="text-lg text-gray-600 mb-10 leading-relaxed">
-                        Recebemos suas informações com sucesso!<br><br>
-                        <strong>Importante:</strong> Para receber o resultado da sua análise, você precisa nos chamar no
-                        WhatsApp no botão abaixo. <br><br>
-                        Nossa equipe avaliará seu perfil individualmente. Se entendermos que podemos ajudar, faremos uma
-                        proposta de assessoria personalizada. Caso contrário, daremos a orientação do caminho ideal que
-                        você deve seguir de acordo com as suas necessidades.
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Tudo certo!</h2>
+                    <p class="text-base text-gray-600 mb-8 leading-relaxed">
+                        Recebemos suas informações!<br>
+                        <strong>Chame no WhatsApp</strong> para receber sua análise.
                     </p>
 
                     <a href="https://wa.me/5511988945503" target="_blank"
