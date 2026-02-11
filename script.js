@@ -677,7 +677,7 @@ function initializeITI() {
 
 // Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-    checkSavedProgress();
+    // DESATIVADO PARA TESTE: checkSavedProgress();
     
     // Múltiplas tentativas de inicialização
     initializeITI();
