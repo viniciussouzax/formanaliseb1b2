@@ -306,6 +306,8 @@ function submitForm() {
     if (data.renda_mensal) {
         data.renda_mensal = data.renda_mensal.replace(/\./g, '').replace(',', '.');
     }
+
+    showStatus("Processando sua análise...");
     data.session_id = sessionId; // Attach session ID to link with lead
 
     // Handle multiple checkboxes (like fonte_renda) correctly
@@ -346,15 +348,8 @@ function submitForm() {
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.innerText = originalText;
-
-                    // Show inline error
-                    const errorPara = document.createElement('p');
-                    errorPara.className = 'error-message text-red-500 text-sm mt-4 text-center';
-                    errorPara.innerText = "Ocorreu um erro ao enviar. Tente novamente.";
-                    submitButton.parentElement.appendChild(errorPara);
-                } else {
-                    alert("Ocorreu um erro ao enviar. Por favor, tente novamente.");
                 }
+                showStatus("Ocorreu um erro ao enviar. Tente novamente.", true);
             }
         })
         .catch((error) => {
@@ -362,15 +357,30 @@ function submitForm() {
             if (submitButton) {
                 submitButton.disabled = false;
                 submitButton.innerText = originalText;
-
-                const errorPara = document.createElement('p');
-                errorPara.className = 'error-message text-red-500 text-sm mt-4 text-center';
-                errorPara.innerText = "Erro de conexão. Verifique sua internet.";
-                submitButton.parentElement.appendChild(errorPara);
-            } else {
-                alert("Erro de conexão. Verifique sua internet e tente novamente.");
             }
+            showStatus("Erro de conexão. Verifique sua internet.", true);
         });
+}
+
+function showStatus(message, isError = false) {
+    const currentStep = document.querySelector('.step.active');
+    if (!currentStep) return;
+
+    // Remove mensagens anteriores
+    const existing = currentStep.querySelector('.status-msg');
+    if (existing) existing.remove();
+
+    const msg = document.createElement('p');
+    msg.className = `status-msg text-sm mt-4 text-center font-medium ${isError ? 'text-red-500' : 'text-gray-500 animate-pulse'}`;
+    msg.innerText = message;
+
+    // Insere após o último elemento do container
+    const container = currentStep.querySelector('.flex.flex-col');
+    if (container) {
+        container.appendChild(msg);
+    } else {
+        currentStep.appendChild(msg);
+    }
 }
 
 // Helper to generate a simple Session ID
