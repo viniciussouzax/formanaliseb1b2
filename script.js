@@ -199,6 +199,24 @@ function validateStep() {
                     showError(input, "Telefone inválido.");
                 }
             }
+        } else if (input.type === 'date' || input.type === 'month') {
+            // Validação de datas
+            if (!input.value) {
+                showError(input, "Selecione uma data.");
+            } else {
+                const selectedDate = new Date(input.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                // Para data de negativa, não pode ser data futura
+                if (input.id === 'data_negativa' && selectedDate > today) {
+                    showError(input, "Data da negativa não pode ser futura.");
+                }
+                // Para última entrada, não pode ser data futura
+                else if (input.id === 'ultima_entrada' && selectedDate > today) {
+                    showError(input, "Data de entrada não pode ser futura.");
+                }
+            }
         } else if (input.tagName === 'SELECT') {
             if (!input.value || input.value === "") showError(input, "Selecione uma opção.");
         } else if (input.type === 'radio' || input.type === 'checkbox') {
@@ -206,8 +224,34 @@ function validateStep() {
         } else {
             if (!input.value.trim()) {
                 showError(input, "Este campo é obrigatório.");
-            } else if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
-                showError(input, "E-mail inválido.");
+            } else if (input.type === 'email') {
+                // Validação mais robusta de email
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(input.value)) {
+                    showError(input, "E-mail inválido. Ex: nome@email.com");
+                }
+            } else if (input.type === 'number' || input.inputMode === 'numeric') {
+                // Validações específicas para campos numéricos
+                const numValue = parseFloat(input.value);
+                
+                if (input.id === 'idade') {
+                    if (isNaN(numValue) || numValue < 1 || numValue > 120) {
+                        showError(input, "Idade deve estar entre 1 e 120 anos.");
+                    }
+                } else if (input.name === 'formacao_ano') {
+                    const currentYear = new Date().getFullYear();
+                    if (isNaN(numValue) || numValue < 1950 || numValue > currentYear) {
+                        showError(input, `Ano deve estar entre 1950 e ${currentYear}.`);
+                    }
+                } else if (input.name === 'qtd_funcionarios' || input.name === 'filhos_qtd') {
+                    if (isNaN(numValue) || numValue < 0) {
+                        showError(input, "Valor não pode ser negativo.");
+                    }
+                } else if (input.name === 'tempo_empresa' || input.name === 'tempo_empresa_abertura') {
+                    if (isNaN(numValue) || numValue < 0 || numValue > 50) {
+                        showError(input, "Valor deve estar entre 0 e 50 anos.");
+                    }
+                }
             }
         }
     });
@@ -423,8 +467,25 @@ function submitForm() {
         console.warn("[SUBMIT] ITI não disponível, telefone sem DDI:", data.telefone);
     }
 
+    // Converter renda_mensal de formato brasileiro (1.234,56) para número
     if (data.renda_mensal) {
-        data.renda_mensal = data.renda_mensal.replace(/\./g, '').replace(',', '.');
+        // Remove pontos de milhar e troca vírgula decimal por ponto
+        data.renda_mensal = parseFloat(data.renda_mensal.replace(/\./g, '').replace(',', '.'));
+    }
+    
+    // Converter datas de yyyy-mm-dd para dd/mm/yyyy
+    const dateFields = ['data_negativa', 'ultima_entrada', 'data_entrada_atual'];
+    dateFields.forEach(field => {
+        if (data[field] && data[field].includes('-')) {
+            const [year, month, day] = data[field].split('-');
+            data[field] = `${day}/${month}/${year}`;
+        }
+    });
+    
+    // Converter mês/ano de yyyy-mm para mm/yyyy
+    if (data.estudo_termino && data.estudo_termino.includes('-')) {
+        const [year, month] = data.estudo_termino.split('-');
+        data.estudo_termino = `${month}/${year}`;
     }
 
     data.session_id = sessionId;
@@ -677,6 +738,14 @@ function initializeITI() {
 
 // Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Configurar datas máximas para inputs de data (não permitir datas futuras)
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        if (input.id === 'data_negativa' || input.id === 'ultima_entrada' || input.id === 'data_entrada_atual') {
+            input.setAttribute('max', today);
+        }
+    });
+    
     // Reativado: verificar se existe progresso salvo
     checkSavedProgress();
     
