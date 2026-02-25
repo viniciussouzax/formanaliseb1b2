@@ -88,7 +88,7 @@ async function syncToSupabase(stepId, data) {
         console.log('[SUPABASE] Sync telefone:', payload.telefone);
 
         const { error } = await supabaseClient
-            .from('analise_visto')
+            .from('analysis')
             .upsert(payload, { onConflict: 'session_id' });
 
         if (error) {
